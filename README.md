@@ -1,7 +1,7 @@
 # phoenix_engine
 Engine for a 2d game
 
-This is a fun project of mine and is not likely to be usebal in near future.
+This is a fun project of mine and is not likely to be useable in near future.
 But if you like you can go through it and point out my mistakes and bad practices. I will try to fix these.
 
 
