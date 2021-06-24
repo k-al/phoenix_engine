@@ -3,9 +3,9 @@ SFMLFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
 O_DEP = src/main.o src/ivec.o src/chunk.o src/plan.o src/server.o src/loader.o src/thing.o
 
-Phoenix: $(O_DEP)
+Phoenix.app: $(O_DEP)
 	##! WARNING: pthread may cause problems with compiling for Windows
-	g++ $(CFLAGS) -o Phoenix $(O_DEP) -pthread $(SFMLFLAGS)
+	g++ $(CFLAGS) -o Phoenix.app $(O_DEP) -pthread $(SFMLFLAGS)
 
 src/main.o: src/main.cpp src/ivec.hpp src/server.hpp
 	g++ $(CFLAGS) -c -o src/main.o src/main.cpp
@@ -28,8 +28,8 @@ src/loader.o: src/loader.cpp src/loader.hpp src/ivec.hpp src/plan.hpp src/chunk.
 src/thing.o: src/thing.cpp src/thing.hpp src/ivec.hpp
 	g++ $(CFLAGS) -c -o src/thing.o src/thing.cpp
 
-run: Phoenix
-	./Phoenix
+run: Phoenix.app
+	./Phoenix.app
 
 clean:
 	rm -f src/*.o
