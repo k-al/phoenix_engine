@@ -4,6 +4,7 @@
 
 #include <set>
 #include <atomic>
+#include <typeinfo>
 
 #include "ivec.hpp"
 
