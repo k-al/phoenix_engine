@@ -5,6 +5,10 @@
 
 struct Wall: Thing {
     
+    
+    void tick (uint64_t tick_time);
+    
+    
 }
 
 #endif
