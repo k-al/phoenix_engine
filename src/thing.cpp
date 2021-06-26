@@ -46,7 +46,7 @@ void Thing::load_suround () {
                 }
                 
             } else {
-                this->loader->load(this->chunk->position + dif;
+                this->loader->load(this->chunk->position + dif);
             }
         }
     }

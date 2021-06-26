@@ -19,7 +19,7 @@
 Chunk::Chunk () {
     this->is_generated = false;
     std::cout << "default constructor of Chunk must not be used!\n";
-    std::exit(700);
+    std::exit(701);
 }
 
 Chunk::Chunk (iVec2 pos) {

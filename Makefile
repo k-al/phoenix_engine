@@ -1,7 +1,9 @@
 CFLAGS = -std=c++17 -O3 -g
 SFMLFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
-O_DEP = src/main.o src/ivec.o src/chunk.o src/plan.o src/server.o src/loader.o src/thing.o
+GAME_OBJ = src/wall.o
+
+O_DEP = $(GAME_OBJ) src/main.o src/ivec.o src/chunk.o src/plan.o src/server.o src/loader.o src/thing.o
 
 Phoenix.app: $(O_DEP)
 	##! WARNING: pthread may cause problems with compiling for Windows
@@ -27,6 +29,9 @@ src/loader.o: src/loader.cpp src/loader.hpp src/ivec.hpp src/plan.hpp src/chunk.
 
 src/thing.o: src/thing.cpp src/thing.hpp src/ivec.hpp
 	g++ $(CFLAGS) -c -o src/thing.o src/thing.cpp
+
+src/wall.o: src/wall.cpp src/wall.hpp src/thing.hpp
+	g++ $(CFLAGS) -c -o src/wall.o src/wall.cpp
 
 run: Phoenix.app
 	./Phoenix.app
