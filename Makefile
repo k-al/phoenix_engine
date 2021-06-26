@@ -33,6 +33,9 @@ src/thing.o: src/thing.cpp src/thing.hpp src/ivec.hpp
 src/wall.o: src/wall.cpp src/wall.hpp src/thing.hpp
 	g++ $(CFLAGS) -c -o src/wall.o src/wall.cpp
 
+src/client.o: src/client.cpp src/client.hpp thing.hpp
+	g++ $(CFLAGS) -c -o src/client.o src/client.cpp
+
 run: Phoenix.app
 	./Phoenix.app
 
