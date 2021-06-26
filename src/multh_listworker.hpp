@@ -10,7 +10,6 @@
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
-// #include <functional>
 
 template <typename O>
 struct Listworker_ini {
