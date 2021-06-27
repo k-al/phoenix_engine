@@ -33,11 +33,11 @@ struct Thing {
     uint16_t load_range; // chunk radius wich is loaded by this object (0 for none)
     
     virtual void tick (uint64_t tick_time) = 0;
-    virtual uint16_t push (Thing* pusher, uint16_t dist, uint16_t dir) = 0;;
+    virtual uint16_t push (Thing* pusher, uint16_t dist, uint16_t dir) = 0;
     
     
     bool chunk_change (iVec2 new_chunk);
-    void chunk_change (Chunk* new_chunk);
+    virtual void chunk_change (Chunk* new_chunk);
     
     void load_suround ();
     
