@@ -1,6 +1,8 @@
 
 #include <SFML/Graphics.hpp>
 
+class Server;
+class Thing;
 
 class Client {
     

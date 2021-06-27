@@ -37,7 +37,7 @@ struct Thing {
     
     
     bool chunk_change (iVec2 new_chunk);
-    void chunk_change (Chunk* new_chunk);
+    virtual void chunk_change (Chunk* new_chunk);
     
     void load_suround ();
     
