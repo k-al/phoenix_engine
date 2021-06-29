@@ -1,4 +1,4 @@
-CFLAGS = -std=c++17 -O3 -g
+CFLAGS = -std=c++17 -O3 -g -I./lib-multh/lib/
 SFMLFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
 GAME_OBJ = src/wall.o
@@ -21,10 +21,10 @@ src/chunk.o: src/chunk.cpp src/chunk.hpp src/thing.hpp src/ivec.hpp
 src/plan.o: src/plan.cpp src/plan.hpp src/chunk.hpp src/ivec.hpp
 	g++ $(CFLAGS) -c -o src/plan.o src/plan.cpp
 
-src/server.o: src/server.cpp src/server.hpp src/loader.hpp src/plan.hpp src/chunk.hpp src/multh_listworker.hpp
+src/server.o: src/server.cpp src/server.hpp src/loader.hpp src/plan.hpp src/chunk.hpp
 	g++ $(CFLAGS) -c -o src/server.o src/server.cpp
 
-src/loader.o: src/loader.cpp src/loader.hpp src/ivec.hpp src/plan.hpp src/chunk.hpp src/thing.hpp src/multh_listworker.hpp
+src/loader.o: src/loader.cpp src/loader.hpp src/ivec.hpp src/plan.hpp src/chunk.hpp src/thing.hpp
 	g++ $(CFLAGS) -c -o src/loader.o src/loader.cpp
 
 src/thing.o: src/thing.cpp src/thing.hpp src/ivec.hpp
