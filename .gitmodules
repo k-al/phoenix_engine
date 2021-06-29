@@ -1,0 +1,3 @@
+[submodule "lib-multh"]
+	path = lib-multh
+	url = ssh://git@github.com/k-al/lib-multh
