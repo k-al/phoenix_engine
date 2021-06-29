@@ -1,4 +1,9 @@
+// Headder guard
+#ifndef VUL_HANDLER_HEADER
+#define VUL_HANDLER_HEADER
+
 #include <vector>
+#include <string>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -17,13 +22,17 @@ class WindowHandler {
     
     ~WindowHandler ();
     
+    bool ini ();
+    
+    void main_loop ();
+    
     // get the vk_extensions needed by glfw
     std::vector<std::string> get_vk_extensions ();
-    
-    bool init ();
     
     static void glfw_setup ();
     
     static void glfw_cleanup ();
     
-}
+};
+
+#endif

@@ -1,5 +1,6 @@
 
 // #include <vector> // included by .hpp
+// #include <string> // included by .hpp
 
 #include "window_handler.hpp"
 
@@ -11,7 +12,7 @@ WindowHandler::~WindowHandler () {
     
 }
 
-bool WindowHandler::init () {
+bool WindowHandler::ini () {
     glfwInit();
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);   // not use opengl
@@ -20,6 +21,8 @@ bool WindowHandler::init () {
     // for fullscreen give a Monitor
     // glfw_window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", glfwGetPrimaryMonitor(), nullptr);
     this->main_window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
+    
+    return true;
 }
 
 //! give a valide oppurtunity to access the events without hide the mainloop here
@@ -50,10 +53,10 @@ std::vector<std::string> WindowHandler::get_vk_extensions () {
 
 //! check the whole glfw after multiwindow setup
 
-static void WindowHandler::glfw_setup () {
+void WindowHandler::glfw_setup () {
     // glfw init that must not repeated for second Window
 }
 
-static void WindowHandler::glfw_cleanup () {
+void WindowHandler::glfw_cleanup () {
     // glfw cleanup that must be done after the last Window closes
 }
