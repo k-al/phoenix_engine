@@ -8,6 +8,13 @@
 #include <GLFW/glfw3.h>
 
 
+struct Device_ini {
+    VkInstance instance;
+    std::vector<VkQueueFlagBits> queue_bits;
+    std::vector<std::string> device_extensions;
+    std::vector<std::string> validation_layers;
+};
+
 class Device {
   public:
     VkPhysicalDevice physical = VK_NULL_HANDLE; // the used graphic card
@@ -22,7 +29,7 @@ class Device {
     ~Device ();
     
     //! give VkInstance, needed queues, device extensions, (and maybe validation layers)
-    bool ini (VkInstance, std::vector<std::string> device_extensions);
+    bool ini (Device_ini ini);
     
     void pickPhysicalDevice (VkInstance, std::vector<std::string> device_extensions);
     

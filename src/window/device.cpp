@@ -21,9 +21,9 @@ Device::~Device () {
 }
 
 //! give needed queues, device extensions, (and maybe validation layers)
-bool Device::ini (VkInstance instance, std::vector<std::string> device_extensions) {
+bool Device::ini (Device_ini ini) {
     if (this->physical == VK_NULL_HANDLE) {
-        this->pickPhysicalDevice(instance, device_extensions);
+        this->pickPhysicalDevice(ini.instance, ini.device_extensions);
     }
     
     return true;
