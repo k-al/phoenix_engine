@@ -12,7 +12,7 @@ Window::~Window () {}
 
 // set the default validation_layers
 void Window::set_validation_layers () {
-    this->validation_layers = std::vector<std::string>("VK_LAYER_KHRONOS_validation");
+    this->validation_layers = std::vector<std::string>({"VK_LAYER_KHRONOS_validation"});
 }
 
 bool Window::ini () {
@@ -27,7 +27,7 @@ bool Window::ini () {
     this->create_vulkan_instance();
     
     Device_ini dev_ini;
-    dev_ini.device_extensions = this->window_handler.get_vk_extensions();
+    dev_ini.device_extensions = this->window_handler.glfw_get_vk_extensions();
     dev_ini.validation_layers = this->validation_layers;
     
     

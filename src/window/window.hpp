@@ -24,11 +24,15 @@ class Window {
     
     std::vector<std::string> validation_layers;
     
+    void set_validation_layers ();
+    
     Window ();
     
     ~Window ();
     
     bool ini ();
+    
+    void create_vulkan_instance ();
     
     
 };
