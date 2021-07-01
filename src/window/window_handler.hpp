@@ -12,6 +12,9 @@ class WindowHandler {
   public:
     GLFWwindow* main_window;
     
+    char** glfw_extensions = nullptr;
+    uint32_t glfw_extensions_count = 0;
+    
     VkInstance instance;
     
     std::vector<std::string> validation_layers;
@@ -31,7 +34,7 @@ class WindowHandler {
     void main_loop ();
     
     // get the vk_extensions needed by glfw
-    std::vector<std::string> glfw_get_vk_extensions ();
+    std::vector<std::string> glfw_get_vk_extensions (bool as_vec);
     
     void glfw_ini ();
     

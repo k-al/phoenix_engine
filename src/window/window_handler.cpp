@@ -10,6 +10,54 @@
 #include "window_handler.hpp"
 
 
+struct CstringArr {
+    char** array;
+    uint32_t length = 0;
+    
+    bool set_array (std::vector<std::string> input) {
+        // dont overwrite dierectly, because memory must be freed
+        if (length != 0) {
+            this->clear();
+        }
+        
+        char** result = new char*[input.size() + 1];
+        result[input.size()] = nullptr;
+        
+        // use this->length as iterator to have always the number of allocated list elements saved
+        for (/*length is 0*/; this->length < input.size(); ++this->length) {
+            char* temp;
+            try {
+                temp = new char[input[this->length].size() + 1];
+            } catch (std::bad_alloc e) {
+                break;
+            }
+            strncpy(temp, input[this->length].c_str(), input[this->length].size());
+            temp[input[this->length].size()] = '\0';
+            result[this->length] = temp;
+        }
+        
+        // return if all the required allocations are sucessfull
+        return this->length = input.size();
+    }
+    
+    void clear () {
+        // free all the allocated things
+        if (this->length > 0) {
+            for (uint32_t i = 0; i < this->length; ++i) {
+                //! free
+            }
+            //! free
+        }
+    }
+    
+    // release the ownership of the array
+    // caller must take care of the freeing
+    char** release () {
+        this->length = 0;
+        return char** array;
+    }
+};
+
 WindowHandler::WindowHandler () {
     
 }
@@ -46,16 +94,25 @@ void WindowHandler::main_loop () {
 }
 
 // get the vk_extensions needed by glfw
-std::vector<std::string> WindowHandler::glfw_get_vk_extensions () {
-    uint32_t count = 0;
-    const char** glfw_extensions = glfwGetRequiredInstanceExtensions(&count);
-    std::vector<std::string> res(count);
-    
-    // convert char** to vector<std::string>
-    for (int i = 0; i < count; i++) {
-        res.push_back(glfwExtensions[i]);
+std::vector<std::string> WindowHandler::glfw_get_vk_extensions (bool as_vec) {
+    if (this->glfw_extensions = nullptr) {
+        this->glfw_extensions_count = 0;
+        this->glfw_extensions = glfwGetRequiredInstanceExtensions(&this->glfw_extensions_count);
     }
-    return res;
+    
+    if (as_vec) {
+        std::vector<std::string> res(this->glfw_extensions_count);
+        
+        // convert char** to vector<std::string>
+        for (int i = 0; i < this->glfw_extensions_count; i++) {
+            res.push_back(this->glfw_extensions[i]);
+        }
+        return res;
+    } else {
+        return std::vector<std::string>();
+    }
+    
+    this->glfw_get_vk_extensions(true);
 }
 
 //! check after the whole glfw multiwindow setup
@@ -83,10 +140,8 @@ void WindowHandler::instance_ini () {
         throw std::runtime_error("validation layers requested, but not available!");
     }
     
-    std::vector<char*> extensions = this->glfw_get_vk_extensions();
-    
     // check extension support for the extensions needed by glfw
-    if (!this->check_extension_support(extensions)) {
+    if (!this->check_extension_support(this->glfw_get_vk_extensions(true))) {
         throw std::runtime_error("Missing a global extension needed by glfw!");
     }
     
@@ -103,8 +158,8 @@ void WindowHandler::instance_ini () {
     VkInstanceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     createInfo.pApplicationInfo = &appInfo;
-    createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
-    createInfo.ppEnabledExtensionNames = const_cast<char**>(extensions.data());
+    createInfo.enabledExtensionCount = this->glfw_extensions_count;
+    createInfo.ppEnabledExtensionNames = this->glfw_extensions;
     createInfo.enabledLayerCount = static_cast<uint32_t>(validation_layers.size());
     createInfo.ppEnabledLayerNames = const_cast<char**>(validation_layers.data());
         
