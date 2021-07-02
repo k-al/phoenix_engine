@@ -1,0 +1,19 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ tarnish-0.1 ]
+  pull_request:
+    branches: [ tarnish-0.1 ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: ls
+      run: ls -la
+    - name: make
+      run: make Phoenix.app
