@@ -14,8 +14,6 @@ class Window {
     WindowHandler window_handler;
     Device device;
     
-    VkInstance vulkan_instance;
-    
     #ifdef NDEBUG
     const bool enable_validation = false;
     #else

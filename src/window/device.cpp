@@ -23,14 +23,14 @@ Device::~Device () {
 //! give needed queues, device extensions, (and maybe validation layers)
 bool Device::ini (Device_ini ini) {
     if (this->physical == VK_NULL_HANDLE) {
-        this->pickPhysicalDevice(ini.instance, ini.device_extensions);
+        this->pick_physical(ini.instance, *ini.device_extensions);
     }
     
     return true;
 }
 
 // select "the best" GPU and assign it to the physicalDevice member
-void Device::pickPhysicalDevice (VkInstance instance, std::vector<std::string> device_extensions) {
+void Device::pick_physical (VkInstance instance, std::vector<std::string> device_extensions) {
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr); // get the number of graphic carts with Vulkan-support
     
@@ -116,6 +116,10 @@ bool Device::check_extension_support (VkPhysicalDevice device, std::vector<std::
     
     // if something remain in the set, its not supported
     return required_extensions.empty();
+}
+
+void Device::logical_ini () {
+    
 }
 
 

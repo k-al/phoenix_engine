@@ -8,6 +8,11 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+
+struct WindowHandler_ini {
+    std::vector<std::string>* validation_layers = nullptr;
+};
+
 class WindowHandler {
   public:
     GLFWwindow* main_window;
@@ -29,16 +34,25 @@ class WindowHandler {
     
     ~WindowHandler ();
     
-    bool ini ();
+    bool ini (WindowHandler_ini);
     
     void main_loop ();
     
-    // get the vk_extensions needed by glfw
-    std::vector<std::string> glfw_get_vk_extensions (bool as_vec);
+    ///////////////////////////
+    // GLFW-window
+    ///////////////////////////
     
     void glfw_ini ();
     
     void glfw_cleanup ();
+    
+    // get the vk_extensions needed by glfw
+    std::vector<std::string> glfw_get_vk_extensions (bool as_vec);
+    
+    
+    ///////////////////////////
+    // VkInstance
+    ///////////////////////////
     
     void instance_ini ();
     
@@ -46,7 +60,18 @@ class WindowHandler {
     
     bool check_layer_support ();
     
+    
+    ///////////////////////////
+    // VkDebugMessenger
+    ///////////////////////////
+    //! needs implementation
+    
     void debug_messenger_ini ();
+    
+    ///////////////////////////
+    // VkSurface
+    ///////////////////////////
+    //! needs implementation
     
     void surface_ini ();
 };

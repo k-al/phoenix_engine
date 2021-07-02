@@ -22,13 +22,13 @@ bool Window::ini () {
         this->set_validation_layers();
     }
     
-    this->window_handler.ini();
+    this->window_handler.ini(WindowHandler_ini());
     
     this->create_vulkan_instance();
     
     Device_ini dev_ini;
-    dev_ini.device_extensions = this->window_handler.glfw_get_vk_extensions(true);
-    dev_ini.validation_layers = this->validation_layers;
+//     dev_ini.device_extensions = &this->window_handler.glfw_get_vk_extensions(true);
+//     dev_ini.validation_layers = &this->validation_layers;
     
     
     return true;

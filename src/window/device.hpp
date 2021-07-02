@@ -10,9 +10,9 @@
 
 struct Device_ini {
     VkInstance instance;
-    std::vector<VkQueueFlagBits> queue_bits;
-    std::vector<std::string> device_extensions;
-    std::vector<std::string> validation_layers;
+    std::vector<VkQueueFlagBits>* queue_bits;
+    std::vector<std::string>* device_extensions;
+    std::vector<std::string>* validation_layers;
 };
 
 class Device {
@@ -31,11 +31,24 @@ class Device {
     //! give VkInstance, needed queues, device extensions, (and maybe validation layers)
     bool ini (Device_ini ini);
     
-    void pickPhysicalDevice (VkInstance, std::vector<std::string> device_extensions);
+    ///////////////////////////
+    // physical device
+    ///////////////////////////
+    
+    void pick_physical (VkInstance, std::vector<std::string> device_extensions);
     
     uint32_t device_suitability (VkPhysicalDevice device, std::vector<std::string> device_extensions);
     
     bool check_extension_support (VkPhysicalDevice, std::vector<std::string> device_extensions);
+    
+    bool check_queue_support (VkPhysicalDevice);
+    
+    ///////////////////////////
+    // logical device
+    ///////////////////////////
+    
+    void logical_ini ();
+    
 };
 
 #endif // Headder guard

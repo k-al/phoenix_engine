@@ -72,7 +72,13 @@ WindowHandler::~WindowHandler () {
     
 }
 
-bool WindowHandler::ini () {
+bool WindowHandler::ini (WindowHandler_ini ini) {
+    
+    if (ini.validation_layers != nullptr && ini.validation_layers->size() > 0) {
+        this->validation_layers = *ini.validation_layers;
+    } else {
+        this->validation_layers = std::vector<std::string>();
+    }
     
     // try to initialize everything
     try {
