@@ -12,7 +12,7 @@ class WindowHandler {
   public:
     GLFWwindow* main_window;
     
-    char** glfw_extensions = nullptr;
+    const char** glfw_extensions = nullptr;
     uint32_t glfw_extensions_count = 0;
     
     VkInstance instance;

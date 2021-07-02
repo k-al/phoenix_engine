@@ -27,7 +27,7 @@ bool Window::ini () {
     this->create_vulkan_instance();
     
     Device_ini dev_ini;
-    dev_ini.device_extensions = this->window_handler.glfw_get_vk_extensions();
+    dev_ini.device_extensions = this->window_handler.glfw_get_vk_extensions(true);
     dev_ini.validation_layers = this->validation_layers;
     
     

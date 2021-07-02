@@ -14,6 +14,10 @@ struct CstringArr {
     char** array;
     uint32_t length = 0;
     
+    ~CstringArr () {
+        this->clear();
+    }
+    
     bool set_array (std::vector<std::string> input) {
         // dont overwrite dierectly, because memory must be freed
         if (length != 0) {
@@ -44,9 +48,11 @@ struct CstringArr {
         // free all the allocated things
         if (this->length > 0) {
             for (uint32_t i = 0; i < this->length; ++i) {
-                //! free
+                delete[] array[i];
             }
-            //! free
+            delete[] array;
+            
+            this->length = 0;
         }
     }
     
@@ -54,7 +60,7 @@ struct CstringArr {
     // caller must take care of the freeing
     char** release () {
         this->length = 0;
-        return char** array;
+        return this->array;
     }
 };
 
@@ -71,8 +77,7 @@ bool WindowHandler::ini () {
     // try to initialize everything
     try {
         this->glfw_ini();
-        
-        
+        this->instance_ini();
         
     } catch (std::exception e) {
         std::cerr << e.what();
@@ -153,15 +158,17 @@ void WindowHandler::instance_ini () {
     appInfo.pEngineName = "tarnish-engine";
     appInfo.engineVersion = VK_MAKE_VERSION(0, 0, 1);
     appInfo.apiVersion = VK_API_VERSION_1_0;
-        
+
+    CstringArr validation_layers_wrap;
+    validation_layers_wrap.set_array(this->validation_layers);
 
     VkInstanceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     createInfo.pApplicationInfo = &appInfo;
     createInfo.enabledExtensionCount = this->glfw_extensions_count;
     createInfo.ppEnabledExtensionNames = this->glfw_extensions;
-    createInfo.enabledLayerCount = static_cast<uint32_t>(validation_layers.size());
-    createInfo.ppEnabledLayerNames = const_cast<char**>(validation_layers.data());
+    createInfo.enabledLayerCount = validation_layers_wrap.length;
+    createInfo.ppEnabledLayerNames = validation_layers_wrap.array; //? maybe need a .release()
         
     if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
         throw std::runtime_error("failed to create instance!");
@@ -198,6 +205,31 @@ bool WindowHandler::check_extension_support(std::vector<std::string> required) {
             return false;
         }
     }
+    return true;
+}
+
+bool WindowHandler::check_layer_support () {
+    uint32_t layerCount;
+    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+    std::vector<VkLayerProperties> availableLayers(layerCount);
+    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+    for (const std::string layerName : this->validation_layers) {
+        bool layerFound = false;
+
+        for (const auto& layerProperties : availableLayers) {
+            if (strcmp(layerName.c_str(), layerProperties.layerName) == 0) {
+                layerFound = true;
+                break;
+            }
+        }
+
+        if (!layerFound) {
+            return false;
+        }
+    }
+
     return true;
 }
 
