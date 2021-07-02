@@ -21,6 +21,8 @@ class Device {
     VkDevice logical; // the logical instance of the used graphic card
     
     std::vector<VkQueue> queues;
+    std::vector<std::string> device_extensions;
+    std::vector<std::string> validation_layers;
     
     bool is_ini = false;
     
@@ -35,11 +37,11 @@ class Device {
     // physical device
     ///////////////////////////
     
-    void pick_physical (VkInstance, std::vector<std::string> device_extensions);
+    void pick_physical (VkInstance);
     
-    uint32_t device_suitability (VkPhysicalDevice device, std::vector<std::string> device_extensions);
+    uint32_t device_suitability (VkPhysicalDevice device);
     
-    bool check_extension_support (VkPhysicalDevice, std::vector<std::string> device_extensions);
+    bool check_extension_support (VkPhysicalDevice);
     
     bool check_queue_support (VkPhysicalDevice);
     

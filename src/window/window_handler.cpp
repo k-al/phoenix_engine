@@ -70,9 +70,14 @@ WindowHandler::WindowHandler () {
 
 WindowHandler::~WindowHandler () {
     
+    
+    //? cleanup this->glfw_extensions i guess
 }
 
 bool WindowHandler::ini (WindowHandler_ini ini) {
+    
+    if (this->is_ini)
+        return false;
     
     if (ini.validation_layers != nullptr && ini.validation_layers->size() > 0) {
         this->validation_layers = *ini.validation_layers;
@@ -89,6 +94,8 @@ bool WindowHandler::ini (WindowHandler_ini ini) {
         std::cerr << e.what();
         return false;
     }
+    
+    this->is_ini = true;
     
     return true;
 }
@@ -141,7 +148,6 @@ void WindowHandler::glfw_ini () {
 
 void WindowHandler::glfw_cleanup () {
     glfwDestroyWindow(this->main_window);
-    this->is_open = false;
     glfwTerminate();
 }
 

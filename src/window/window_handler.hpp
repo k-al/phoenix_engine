@@ -27,7 +27,7 @@ class WindowHandler {
     uint32_t WIDTH = 800;
     uint32_t HEIGHT = 600;
     
-    bool is_open = false;
+    bool is_ini = false;
     
     
     WindowHandler ();

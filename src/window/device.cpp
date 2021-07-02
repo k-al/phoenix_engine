@@ -22,15 +22,21 @@ Device::~Device () {
 
 //! give needed queues, device extensions, (and maybe validation layers)
 bool Device::ini (Device_ini ini) {
+    
+    this->device_extensions = *ini.device_extensions;
+    this->validation_layers = *ini.validation_layers;
+    
     if (this->physical == VK_NULL_HANDLE) {
-        this->pick_physical(ini.instance, *ini.device_extensions);
+        this->pick_physical(ini.instance);
     }
     
+    
+    this->is_ini = true;
     return true;
 }
 
-// select "the best" GPU and assign it to the physicalDevice member
-void Device::pick_physical (VkInstance instance, std::vector<std::string> device_extensions) {
+// select "the best" GPU and assign it to the physical member
+void Device::pick_physical (VkInstance instance) {
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr); // get the number of graphic carts with Vulkan-support
     
@@ -45,7 +51,7 @@ void Device::pick_physical (VkInstance instance, std::vector<std::string> device
     uint32_t hiscore = 0;
     uint32_t score = 0;
     for (const VkPhysicalDevice device : devices) {
-        score = this->device_suitability(device, device_extensions);
+        score = this->device_suitability(device);
         if (score > hiscore) {
             this->physical = device;
             hiscore = score;
@@ -58,7 +64,7 @@ void Device::pick_physical (VkInstance instance, std::vector<std::string> device
 }
 
 // rate one GPU (mainly check if all is supported)
-uint32_t Device::device_suitability (VkPhysicalDevice device, std::vector<std::string> device_extensions) {
+uint32_t Device::device_suitability (VkPhysicalDevice device) {
     
     uint32_t score = 1;
     
@@ -76,7 +82,7 @@ uint32_t Device::device_suitability (VkPhysicalDevice device, std::vector<std::s
 //     }
     
     // graphic card must support all required extensions
-    if (!this->check_extension_support(device, device_extensions)) {
+    if (!this->check_extension_support(device)) {
         return 0;
     }
     
@@ -99,7 +105,7 @@ uint32_t Device::device_suitability (VkPhysicalDevice device, std::vector<std::s
 }
 
 // checks if all device specific extensions (stored in 'deviceExtensions') are supported by given device 
-bool Device::check_extension_support (VkPhysicalDevice device, std::vector<std::string> device_extensions) {
+bool Device::check_extension_support (VkPhysicalDevice device) {
     uint32_t extensionCount;
     vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
     
@@ -107,7 +113,7 @@ bool Device::check_extension_support (VkPhysicalDevice device, std::vector<std::
     std::vector<VkExtensionProperties> availableExtensions(extensionCount);
     vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
     
-    std::set<std::string> required_extensions (device_extensions.begin(), device_extensions.end());
+    std::set<std::string> required_extensions (this->device_extensions.begin(), this->device_extensions.end());
     
     // delete all found extensions from the set of wanted extension
     for (const auto& extension : availableExtensions) {
