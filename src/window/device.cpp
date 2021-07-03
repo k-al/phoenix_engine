@@ -36,6 +36,7 @@ bool Device::ini (Device_ini ini) {
 }
 
 // select "the best" GPU and assign it to the physical member
+//? make it generic, so you can pick different GPUs
 void Device::pick_physical (VkInstance instance) {
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr); // get the number of graphic carts with Vulkan-support
@@ -126,6 +127,52 @@ bool Device::check_extension_support (VkPhysicalDevice device) {
 
 void Device::logical_ini () {
     
+    // define all the queues, that are needed
+    QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+    float queuePriority = 1.0f;
+    
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+    std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
+    
+    // because there are more than one queues, its an array wich is build in this loop
+    for (uint32_t queueFamily : uniqueQueueFamilies) {
+        VkDeviceQueueCreateInfo queueCreateInfo{};
+            queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            queueCreateInfo.queueFamilyIndex = queueFamily;  // wich queue should be created
+            queueCreateInfo.queueCount = 1; // how many
+            queueCreateInfo.pQueuePriorities = &queuePriority; // priority from 0.0 to 1.0
+        
+        queueCreateInfos.push_back(queueCreateInfo);
+    }
+    
+    // define all the device features, that are needed
+    VkPhysicalDeviceFeatures deviceFeatures{};
+    
+    // define the logical device, that should be created
+    VkDeviceCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+        createInfo.pQueueCreateInfos = queueCreateInfos.data();
+        createInfo.pEnabledFeatures = &deviceFeatures;
+        // device specific extensions
+        createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+        createInfo.ppEnabledExtensionNames = deviceExtensions.data();
+        
+        if (enableValidationLayers) { // the two fields are deprecated and not used in up-to-date implementations
+            createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size()); // set them anyway
+            createInfo.ppEnabledLayerNames = validationLayers.data();
+        } else {
+            createInfo.enabledLayerCount = 0;
+        }
+    
+    // finaly create the logical device
+    if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create logical device!");
+    }
+    
+    // get the queues from the device
+    vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue); // get the 0'th graphic queue
+    vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue); // get the 0'th presentation queue
 }
 
 

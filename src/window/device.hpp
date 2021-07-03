@@ -39,7 +39,7 @@ class Device {
     
     void pick_physical (VkInstance);
     
-    uint32_t device_suitability (VkPhysicalDevice device);
+    uint32_t device_suitability (VkPhysicalDevice);
     
     bool check_extension_support (VkPhysicalDevice);
     
