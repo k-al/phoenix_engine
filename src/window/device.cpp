@@ -37,7 +37,7 @@ bool Device::ini (Device_ini ini) {
 
 // select "the best" GPU and assign it to the physical member
 //? make it generic, so you can pick different GPUs
-void Device::pick_physical (VkInstance instance) {
+void Device::pick_physical (VkInstance instance, ) {
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr); // get the number of graphic carts with Vulkan-support
     

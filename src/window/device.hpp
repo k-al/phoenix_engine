@@ -11,6 +11,7 @@
 struct Device_ini {
     VkInstance instance;
     std::vector<VkQueueFlagBits>* queue_bits;
+    std::vector<std::set<size_t>> queue_patch;
     std::vector<std::string>* device_extensions;
     std::vector<std::string>* validation_layers;
 };
@@ -21,6 +22,7 @@ class Device {
     VkDevice logical; // the logical instance of the used graphic card
     
     std::vector<VkQueue> queues;
+    std::vector<size_t> queue_indices;
     std::vector<std::string> device_extensions;
     std::vector<std::string> validation_layers;
     
