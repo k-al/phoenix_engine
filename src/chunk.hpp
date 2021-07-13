@@ -39,7 +39,7 @@ struct Chunk {
         return this->multh_added[0].load();
     }
     
-    static void tick (Chunk*);
+    static void tick (Chunk*, uint64_t);
 };
 
 #endif //CHUNK_HEADER

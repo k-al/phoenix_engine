@@ -35,9 +35,9 @@ bool Server::ini (Server_ini ini) {
     }
     std::cout << "initialze Server...\n";
     
-    Listworker_ini<Chunk> lw_ini;
+    multh::Listworker_ini<Chunk> lw_ini;
     lw_ini.thread_count = ini.thread_count;
-    lw_ini.cycletime = ini.cycletime;
+    lw_ini.cycle_time = ini.cycletime;
     lw_ini.process_element = Chunk::tick;
     
     if (!this->worker.ini(lw_ini)) {
@@ -45,7 +45,7 @@ bool Server::ini (Server_ini ini) {
         return false;
     }
     
-    std::cout << "Serverworker initialzed with " << lw_ini.cycletime.count() << "\n";
+    std::cout << "Serverworker initialzed with " << lw_ini.cycle_time.count() << "\n";
     
     Loader_ini lo_ini;
     lo_ini.map = &this->map;
