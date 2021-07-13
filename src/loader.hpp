@@ -17,7 +17,7 @@ struct Loader_ini {
     std::string saving_loc;
     uint64_t thread_count = 2;
     Plan* map;
-    Listworker<Chunk>* server_worker;
+    multh::Listworker<Chunk>* server_worker;
 };
 
 class Loader {
@@ -29,8 +29,8 @@ class Loader {
     std::string saving_loc;
     Plan* map;
     
-    Listworker<Thing> worker;
-    Listworker<Chunk>* server_worker;
+    multh::Listworker<Thing> worker;
+    multh::Listworker<Chunk>* server_worker;
     
     
     Loader ();
@@ -41,7 +41,7 @@ class Loader {
     
     void start ();
     
-    static void check_loaded_chunks (Thing*);
+    static void check_loaded_chunks (Thing*, uint64_t);
     
     bool load (iVec2 pos);
     

@@ -51,7 +51,7 @@ void Chunk::add (Thing* add_ob) {
     //! unlock chunk
 }
 
-void Chunk::tick (Chunk* ch) {
+void Chunk::tick (Chunk* ch, uint64_t cycle) {
     std::cout << "Server Tick Thread " << std::this_thread::get_id() << " gives tick\n";
     for (auto it = ch->objects.begin(); it != ch->objects.end(); ++it) {
         (*it)->tick(0);
