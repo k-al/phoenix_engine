@@ -9,7 +9,7 @@
 
 #include "window_handler.hpp"
 
-
+//! problem with wrapper
 struct CstringArr {
     char** array;
     uint32_t length = 0;
@@ -19,6 +19,9 @@ struct CstringArr {
     }
     
     bool set_array (std::vector<std::string> input) {
+        
+        std::cout << "set_array in\n";
+        
         // dont overwrite dierectly, because memory must be freed
         if (length != 0) {
             this->clear();
@@ -39,6 +42,8 @@ struct CstringArr {
             temp[input[this->length].size()] = '\0';
             result[this->length] = temp;
         }
+        
+        std::cout << "set_array out\n";
         
         // return if all the required allocations are sucessfull
         return this->length = input.size();
@@ -79,8 +84,8 @@ bool WindowHandler::ini (WindowHandler_ini ini) {
     if (this->is_ini)
         return false;
     
-    if (ini.validation_layers != nullptr && ini.validation_layers->size() > 0) {
-        this->validation_layers = *ini.validation_layers;
+    if (ini.validation_layers.size() > 0) {
+        this->validation_layers = ini.validation_layers;
     } else {
         this->validation_layers = std::vector<std::string>();
     }
@@ -130,7 +135,8 @@ std::vector<std::string> WindowHandler::glfw_get_vk_extensions (bool as_vec) {
         return std::vector<std::string>();
     }
     
-    this->glfw_get_vk_extensions(true);
+    // ?!?
+//     this->glfw_get_vk_extensions(true);
 }
 
 //! check after the whole glfw multiwindow setup
@@ -179,12 +185,20 @@ void WindowHandler::instance_ini () {
     createInfo.pApplicationInfo = &appInfo;
     createInfo.enabledExtensionCount = this->glfw_extensions_count;
     createInfo.ppEnabledExtensionNames = this->glfw_extensions;
+    
+    std::cout << "got the glfw_extensions\n";
+    
+    //! got problem with wrapper
     createInfo.enabledLayerCount = validation_layers_wrap.length;
     createInfo.ppEnabledLayerNames = validation_layers_wrap.array; //? maybe need a .release()
         
+    std::cout << "problem is in CreateInstanance\n";
+    
     if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
         throw std::runtime_error("failed to create instance!");
     }
+    
+    std::cout << "instance build\n;";
 }
 
 bool WindowHandler::check_extension_support(std::vector<std::string> required) {

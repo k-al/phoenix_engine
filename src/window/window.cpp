@@ -6,6 +6,8 @@
 
 #include "window.hpp"
 
+#include <iostream>
+
 Window::Window () {}
 
 Window::~Window () {}
@@ -22,7 +24,11 @@ bool Window::ini () {
         this->set_validation_layers();
     }
     
-    this->window_handler.ini(WindowHandler_ini());
+    std::cout << "got before window_handler_ini\n";
+    
+    this->window_handler.ini(WindowHandler_ini(this->validation_layers));
+    
+    std::cout << "got after window_handler_ini\n";
     
     this->create_vulkan_instance();
     

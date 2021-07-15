@@ -10,7 +10,11 @@
 
 
 struct WindowHandler_ini {
-    std::vector<std::string>* validation_layers = nullptr;
+    std::vector<std::string> validation_layers;
+    
+    WindowHandler_ini (std::vector<std::string> validation_layers) {
+        this->validation_layers = validation_layers;
+    }
 };
 
 class WindowHandler {

@@ -2,12 +2,13 @@
 // #include <vector> // included by .hpp
 #include <stdexcept>
 #include <string>
-#include <set>
+// #include <set> // included by .hpp
 
 // #define GLFW_INCLUDE_VULKAN // included by .hpp
 // #include <GLFW/glfw3.h> // included by .hpp
 
 #include "device.hpp"
+#include <iostream>
 
 
 Device::Device () {}
@@ -23,8 +24,8 @@ Device::~Device () {
 //! give needed queues, device extensions, (and maybe validation layers)
 bool Device::ini (Device_ini ini) {
     
-    this->device_extensions = *ini.device_extensions;
-    this->validation_layers = *ini.validation_layers;
+    this->device_extensions = ini.device_extensions;
+    this->validation_layers = ini.validation_layers;
     
     if (this->physical == VK_NULL_HANDLE) {
         this->pick_physical(ini.instance);
@@ -37,7 +38,7 @@ bool Device::ini (Device_ini ini) {
 
 // select "the best" GPU and assign it to the physical member
 //? make it generic, so you can pick different GPUs
-void Device::pick_physical (VkInstance instance, ) {
+void Device::pick_physical (VkInstance instance) {
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr); // get the number of graphic carts with Vulkan-support
     
@@ -78,9 +79,10 @@ uint32_t Device::device_suitability (VkPhysicalDevice device) {
     vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
     
     // graphic card must have all required queueFamilies
-//     if (!qf_indices.isComplete()) {
-//         return 0;
-//     }
+    score += this->check_queue_support(device);
+    if (score == 0) {
+        return 0;
+    }
     
     // graphic card must support all required extensions
     if (!this->check_extension_support(device)) {
@@ -126,7 +128,7 @@ bool Device::check_extension_support (VkPhysicalDevice device) {
 }
 
 void Device::logical_ini () {
-    
+    /*
     // define all the queues, that are needed
     QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
     float queuePriority = 1.0f;
@@ -173,6 +175,58 @@ void Device::logical_ini () {
     // get the queues from the device
     vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue); // get the 0'th graphic queue
     vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue); // get the 0'th presentation queue
+    */
+}
+
+int32_t Device::check_queue_support (VkPhysicalDevice device) {
+    std::cout << "check_queue_support in\n";
+    
+    // get the nuber of supported queues
+    uint32_t device_support_count = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &device_support_count, nullptr);
+    
+    // get a list of all supported queues
+    std::vector<VkQueueFamilyProperties> device_support(device_support_count);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &device_support_count, device_support.data());
+    
+    for (const auto requirement : this->queue_req) {
+        bool found = false;
+        
+        for (const auto supported : device_support) {
+            if (requirement & supported.queueFlags) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            std::cout << "check_queue_support out\n";
+            return -1;
+        }
+    }
+    
+    int32_t res = 0;
+    for (const std::set<size_t> batch : this->queue_batch) {
+        bool found = false;
+        uint32_t batch_flags = 0;
+        
+        // get all flags of the batch together
+        for (auto set_it = batch.begin(); set_it != batch.end(); set_it++) {
+            batch_flags = batch_flags | this->queue_req[*set_it];
+        }
+        // test the whole flagset
+        for (const auto supported : device_support) {
+            if (batch_flags & supported.queueFlags == batch_flags) {
+                found = true;
+                break;
+            }
+        }
+        if (found) {
+            res += batch.size() * 20;
+        }
+    }
+    std::cout << "check_queue_support out\n";
+    
+    return res;
 }
 
 

@@ -7,13 +7,16 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <set>
+#include <vector>
+
 
 struct Device_ini {
     VkInstance instance;
-    std::vector<VkQueueFlagBits>* queue_bits;
-    std::vector<std::set<size_t>> queue_patch;
-    std::vector<std::string>* device_extensions;
-    std::vector<std::string>* validation_layers;
+    std::vector<VkQueueFlagBits> queue_bits;
+    std::vector<std::set<size_t>> queue_batch;
+    std::vector<std::string> device_extensions;
+    std::vector<std::string> validation_layers;
 };
 
 class Device {
@@ -21,6 +24,8 @@ class Device {
     VkPhysicalDevice physical = VK_NULL_HANDLE; // the used graphic card
     VkDevice logical; // the logical instance of the used graphic card
     
+    std::vector<VkQueueFlagBits> queue_req;
+    std::vector<std::set<size_t>> queue_batch;
     std::vector<VkQueue> queues;
     std::vector<size_t> queue_indices;
     std::vector<std::string> device_extensions;
@@ -45,7 +50,7 @@ class Device {
     
     bool check_extension_support (VkPhysicalDevice);
     
-    bool check_queue_support (VkPhysicalDevice);
+    int32_t check_queue_support (VkPhysicalDevice);
     
     ///////////////////////////
     // logical device
