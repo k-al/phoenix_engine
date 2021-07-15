@@ -25,7 +25,7 @@ class Server {
     bool is_ini = false;
     bool is_run = false;
     
-    Listworker<Chunk> worker;
+    multh::Listworker<Chunk> worker;
     
     Server (/*saving location*/);
     
