@@ -27,8 +27,8 @@ struct CstringArr {
             this->clear();
         }
         
-        char** result = new char*[input.size() + 1];
-        result[input.size()] = nullptr;
+        this->array = new char*[input.size() + 1];
+        this->array[input.size()] = nullptr;
         
         // use this->length as iterator to have always the number of allocated list elements saved
         for (/*length is 0*/; this->length < input.size(); ++this->length) {
@@ -40,7 +40,7 @@ struct CstringArr {
             }
             strncpy(temp, input[this->length].c_str(), input[this->length].size());
             temp[input[this->length].size()] = '\0';
-            result[this->length] = temp;
+            this->array[this->length] = temp;
         }
         
         std::cout << "set_array out\n";

@@ -70,8 +70,6 @@ uint32_t Device::device_suitability (VkPhysicalDevice device) {
     
     uint32_t score = 1;
     
-    // QueueFamilyIndices qf_indices = findQueueFamilies(device); // get the required queueFamilies
-    
     VkPhysicalDeviceProperties deviceProperties; // info about basic device properties (name, type, vulkan-version)
     vkGetPhysicalDeviceProperties(device, &deviceProperties);
     
@@ -80,7 +78,7 @@ uint32_t Device::device_suitability (VkPhysicalDevice device) {
     
     // graphic card must have all required queueFamilies
     score += this->check_queue_support(device);
-    if (score == 0) {
+    if (score == 0) { // check_extension_support returns -1 if something is unavailable so if score is 0 after call, device is not suitable
         return 0;
     }
     
@@ -128,6 +126,9 @@ bool Device::check_extension_support (VkPhysicalDevice device) {
 }
 
 void Device::logical_ini () {
+    
+    
+    
     /*
     // define all the queues, that are needed
     QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
@@ -189,6 +190,7 @@ int32_t Device::check_queue_support (VkPhysicalDevice device) {
     std::vector<VkQueueFamilyProperties> device_support(device_support_count);
     vkGetPhysicalDeviceQueueFamilyProperties(device, &device_support_count, device_support.data());
     
+    // first test if all requirements are supported
     for (const auto requirement : this->queue_req) {
         bool found = false;
         
@@ -204,6 +206,7 @@ int32_t Device::check_queue_support (VkPhysicalDevice device) {
         }
     }
     
+    // test if batches could use one queue and based on that give extra device score
     int32_t res = 0;
     for (const std::set<size_t> batch : this->queue_batch) {
         bool found = false;

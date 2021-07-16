@@ -27,7 +27,7 @@ class Device {
     std::vector<VkQueueFlagBits> queue_req;
     std::vector<std::set<size_t>> queue_batch;
     std::vector<VkQueue> queues;
-    std::vector<size_t> queue_indices;
+    std::vector<std::pair<size_t, size_t> queue_indices; // pair of <family, index>
     std::vector<std::string> device_extensions;
     std::vector<std::string> validation_layers;
     
