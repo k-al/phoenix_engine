@@ -2,12 +2,14 @@
 // #include <vector> // included by .hpp
 #include <stdexcept>
 #include <string>
+#include <map>
 // #include <set> // included by .hpp
 
 // #define GLFW_INCLUDE_VULKAN // included by .hpp
 // #include <GLFW/glfw3.h> // included by .hpp
 
 #include "device.hpp"
+
 #include <iostream>
 
 
@@ -126,6 +128,57 @@ bool Device::check_extension_support (VkPhysicalDevice device) {
 }
 
 void Device::logical_ini () {
+    
+    // get the correct length
+    this->queue_indices.reserve(this->queue_req.size());
+    
+    std::map<size_t, size_t> queue_count;
+    
+    // get the nuber of supported queues
+    uint32_t device_support_count = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(this->physical, &device_support_count, nullptr);
+    
+    // get a list of all supported queues
+    std::vector<VkQueueFamilyProperties> device_support(device_support_count);
+    vkGetPhysicalDeviceQueueFamilyProperties(this->physical, &device_support_count, device_support.data());
+    
+    // get the indices for full batches
+    for (const std::set<size_t> batch : this->queue_batch) {
+        bool found = false;
+        uint32_t batch_flags = 0;
+        size_t index = 0;
+        
+        // get all flags of the batch together
+        for (auto set_it = batch.begin(); set_it != batch.end(); set_it++) {
+            batch_flags = batch_flags | this->queue_req[*set_it];
+        }
+        // test the whole flagset
+        for (const auto supported : device_support) {
+            if (batch_flags & supported.queueFlags == batch_flags) {
+                found = true;
+                break;
+            }
+            ++index;
+        }
+        if (found) {
+            std::pair<size_t, size_t> queue_index;
+            queue_index.first = index;
+            
+            if (queue_count.count(index) > 0) {
+                ++queue_count[index];
+            } else {
+                queue_count[index] = 0;
+            }
+            queue_index.second = queue_count[index];
+            
+            for (auto set_it = batch.begin(); set_it != batch.end(); set_it++) {
+                this->queue_indices[*set_it] = queue_index;
+            }
+        }
+    }
+    
+    // until here queue_count have the last index of each family
+    // after incrementing it holds the actual number of queues
     
     
     
