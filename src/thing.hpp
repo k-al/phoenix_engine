@@ -13,10 +13,14 @@ struct Chunk;
 struct Plan;
 struct Loader;
 
-//# use static polymorphism instead of virtual functions
-struct Thing {
+
+class Thing {
   public:
-      
+    
+    Thing ();
+    
+    virtual ~Thing ();
+    
     //! get the loader from somewhere
     Loader* loader;
     
@@ -25,20 +29,30 @@ struct Thing {
     Chunk* chunk;
     iVec2 position;
     
+    uint16_t load_range; // chunk radius wich is loaded by this object (0 for none)
+    
+    iVec2 collbox_size;
+    inline iVec2 upper_bound () const { return this->position + (this->collbox_size / 2); } //? do i need these?
+    inline iVec2 lower_bound () const { return this->position - (this->collbox_size / 2); }
+    
+    // properties
     bool solide;
     
     bool is_ooi;
     std::string ooiid;
     
-    uint16_t load_range; // chunk radius wich is loaded by this object (0 for none)
+    // hook functions
+    std::function<void(uint64_t tick_time)> tick_hook;
+    std::function<uint16_t(Thing* pusher, uint16_t dist, uint16_t dir)> push_hook;
+    std::function<void(Thing* collider)> collide_hook;
     
-    virtual void tick (uint64_t tick_time) = 0;
-    virtual uint16_t push (Thing* pusher, uint16_t dist, uint16_t dir) = 0;
+    // basic interaction functions
+    bool move (iVec2 direction); // returns true if full length has been moved (nothing in the way)
+    bool teleport (iVec2 position, iVec2 chunk, Plan* map, bool force); // return true if destination is free (nothing in the way)
     
-    
-    bool chunk_change (iVec2 new_chunk);
-    virtual void chunk_change (Chunk* new_chunk);
-    
+    // background functions
+    bool chunk_change (iVec2 new_chunk); // returns false if chunk not found
+    bool chunk_change (Chunk* new_chunk); // returns always true (chunk already found)
     void load_suround ();
     
     

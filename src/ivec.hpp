@@ -23,6 +23,10 @@ struct iVec2 {
     
     void operator*= (int64_t mul);
     
+    iVec2 operator/ (int64_t mul) const;
+    
+    void operator/= (int64_t mul);
+    
     iVec2 operator+ (const iVec2 add) const;
     
     void operator+= (const iVec2 add);
