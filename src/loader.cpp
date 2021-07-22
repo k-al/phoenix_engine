@@ -70,7 +70,7 @@ void Loader::start () {
     std::cout << "Loader is started\n";
 }
 
-void Loader::check_loaded_chunks(Thing* t, uint64_t cycle) {
+void Loader::check_loaded_chunks(Thing* t, uint64_t cycle_nr) {
     return;
 }
 

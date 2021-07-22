@@ -37,6 +37,15 @@ void iVec2::operator*= (int64_t mul) {
     this->y *= mul;
 }
 
+iVec2 iVec2::operator/ (int64_t div) const {
+    return iVec2(this->x / div, this->y / div);
+}
+
+void iVec2::operator/= (int64_t div) {
+    this->x /= div;
+    this->y /= div;
+}
+
 iVec2 iVec2::operator+ (const iVec2 add) const {
     return iVec2(this->x + add.x, this->y + add.y);
 }
