@@ -40,9 +40,9 @@ bool Loader::ini(Loader_ini ini) {
     this->map = ini.map;
     this->server_worker = ini.server_worker;
     
-    Listworker_ini<Thing> l_ini;
+    multh::Listworker_ini<Thing> l_ini;
     l_ini.thread_count = ini.thread_count;
-    l_ini.cycletime = std::chrono::milliseconds(500);
+    l_ini.cycle_time = std::chrono::milliseconds(500);
     l_ini.del_it_pos = 0;
     l_ini.process_element = Loader::check_loaded_chunks;
     
@@ -70,7 +70,7 @@ void Loader::start () {
     std::cout << "Loader is started\n";
 }
 
-void Loader::check_loaded_chunks(Thing* t) {
+void Loader::check_loaded_chunks(Thing* t, uint64_t cycle_nr) {
     return;
 }
 

@@ -47,11 +47,11 @@ class Thing {
     std::function<void(Thing* collider)> collide_hook;
     
     // basic interaction functions
-    bool move (iVec2 direction); // returns true if full length has been moved (nothing in the way)
+    bool move (const iVec2& direction); // returns true if full length has been moved (nothing in the way)
     bool teleport (iVec2 position, iVec2 chunk, Plan* map, bool force); // return true if destination is free (nothing in the way)
     
     // background functions
-    bool chunk_change (iVec2 new_chunk); // returns false if chunk not found
+    bool chunk_change (const iVec2& new_chunk); // returns false if chunk not found
     bool chunk_change (Chunk* new_chunk); // returns always true (chunk already found)
     void load_suround ();
     

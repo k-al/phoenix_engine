@@ -7,22 +7,24 @@
 #include "thing.hpp"
 
 bool Thing::move (const iVec2& direction) {
-    iVec2 temp_upper = this->upper_bounds() + direction;
-    iVec2 temp_lower = this->lower_bounds() + direction;
+    iVec2 temp_upper = this->upper_bound() + direction;
+    iVec2 temp_lower = this->lower_bound() + direction;
     
     
     // collision detection
     //! chunk borders are dangerous
-    for (const Thing* other : this->chunk) {
+    for (const Thing* other : this->chunk->objects) {
         //# store other.X_bounds temporaly, so it doesnt compute twice
-        if (temp_upper.x > other.lower_bounds.x
-            && temp_lower.x < other.upper_bounds.x
-            && temp_upper.y > other.lower_bounds.y
-            && temp_lower.y < other.upper_bounds.y
+        if (temp_upper.x > other->lower_bound().x
+            && temp_lower.x < other->upper_bound().x
+            && temp_upper.y > other->lower_bound().y
+            && temp_lower.y < other->upper_bound().y
         ) {
             // hit
         }
     }
+    
+    return true;
 }
 
 bool Thing::chunk_change (const iVec2& new_chunk_pos) {
