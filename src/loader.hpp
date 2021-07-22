@@ -40,8 +40,8 @@ class Loader {
     bool ini (Loader_ini);
     
     void start ();
-    
-    static void check_loaded_chunks (Thing*, uint64_t cycle_nr);
+  
+    static void check_loaded_chunks (Thing*, uint64_t);
     
     bool load (iVec2 pos);
     
