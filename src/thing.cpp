@@ -6,8 +6,28 @@
 
 #include "thing.hpp"
 
+bool Thing::move (const iVec2& direction) {
+    iVec2 temp_upper = this->upper_bound() + direction;
+    iVec2 temp_lower = this->lower_bound() + direction;
+    
+    
+    // collision detection
+    //! chunk borders are dangerous
+    for (const Thing* other : this->chunk->objects) {
+        //# store other.X_bounds temporaly, so it doesnt compute twice
+        if (temp_upper.x > other->lower_bound().x
+            && temp_lower.x < other->upper_bound().x
+            && temp_upper.y > other->lower_bound().y
+            && temp_lower.y < other->upper_bound().y
+        ) {
+            // hit
+        }
+    }
+    
+    return true;
+}
 
-bool Thing::chunk_change (iVec2 new_chunk_pos) {
+bool Thing::chunk_change (const iVec2& new_chunk_pos) {
     // find Chunk in chunk_it->second
     auto map_it = this->map->chunks.find(new_chunk_pos);
     // tests, if chunk realy exists
@@ -19,7 +39,7 @@ bool Thing::chunk_change (iVec2 new_chunk_pos) {
     }
 }
 
-void Thing::chunk_change (Chunk* new_chunk) {
+bool Thing::chunk_change (Chunk* new_chunk) {
     
     new_chunk->add(this);
     this->chunk->remove(this);
@@ -29,6 +49,8 @@ void Thing::chunk_change (Chunk* new_chunk) {
     if (this->load_range != 0) {
         this->load_suround();
     }
+    
+    return true;
 }
 
 void Thing::load_suround () {
