@@ -6,21 +6,16 @@
 
 #include "thing.hpp"
 
+//# dont use full coll_check???
 bool Thing::move (const iVec2& direction) {
-    iVec2 temp_upper = this->upper_bound() + direction;
-    iVec2 temp_lower = this->lower_bound() + direction;
     
+    std::vector<Thing*> collisions = this->coll_check();
     
-    // collision detection
-    //! chunk borders are dangerous
-    for (const Thing* other : this->chunk->objects) {
-        //# store other.X_bounds temporaly, so it doesnt compute twice
-        if (temp_upper.x > other->lower_bound().x
-            && temp_lower.x < other->upper_bound().x
-            && temp_upper.y > other->lower_bound().y
-            && temp_lower.y < other->upper_bound().y
-        ) {
-            // hit
+    if (this->is_solide(nullptr)) { // check if collides with something
+        for (const Thing* coll : collisions) {
+            if (this->is_solide(coll) && coll->is_solide(this)) {
+                
+            }
         }
     }
     
@@ -53,7 +48,7 @@ bool Thing::chunk_change (Chunk* new_chunk) {
     return true;
 }
 
-void Thing::load_suround () {
+void Thing::load_suround () const {
     auto chunk_it = this->map->chunks.end();
     iVec2 dif(0, 0);
     
@@ -73,3 +68,26 @@ void Thing::load_suround () {
         }
     }
 }
+
+std::vector<Thing*> Thing::coll_check (iVec2 direction) const {
+    std::vector<Thing*> res;
+    
+    iVec2 temp_upper = this->upper_bound() + direction;
+    iVec2 temp_lower = this->lower_bound() + direction;
+    
+    // collision detection
+    //! chunk borders are dangerous
+    for (Thing* other : this->chunk->objects) {
+        //# store other.X_bounds temporaly, so it doesnt compute twice
+        if (temp_upper.x > other->lower_bound().x
+            && temp_lower.x < other->upper_bound().x
+            && temp_upper.y > other->lower_bound().y
+            && temp_lower.y < other->upper_bound().y
+        ) {
+            res.push_back(other);
+        }
+    }
+    
+    return res;
+}
+
