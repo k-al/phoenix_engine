@@ -128,9 +128,11 @@ bool Device::check_extension_support (VkPhysicalDevice device) {
 }
 
 void Device::logical_ini () {
+    std::vector<bool> got_index;
     
     // get the correct length
-    this->queue_indices.reserve(this->queue_req.size());
+    this->queue_indices.resize(this->queue_req.size());
+    got_index.resize(this->queue_req.size(), false);
     
     std::map<size_t, size_t> queue_count;
     
@@ -173,12 +175,48 @@ void Device::logical_ini () {
             
             for (auto set_it = batch.begin(); set_it != batch.end(); set_it++) {
                 this->queue_indices[*set_it] = queue_index;
+                got_index[*set_it] = true;
             }
         }
     }
     
+    // get the single queues
+    for (size_t i = 0; i < this->queue_req.size(); ++i) {
+        if (!got_index[i]) { // if it wasnt in one of the patches
+            size_t index = 0;
+            
+            for (const auto supported : device_support) {
+                if (queue_req[i] & supported.queueFlags == queue_req[i]) {
+                    got_index[i] = true;
+                    break;
+                }
+                ++index;
+            }
+            if (!got_index[i]) {
+                //? throw
+                exit(1); // but device_suitability said everything was supported
+            }
+            
+            std::pair<size_t, size_t> queue_index;
+            queue_index.first = index;
+            
+            if (queue_count.count(index) > 0) {
+                ++queue_count[index];
+            } else {
+                queue_count[index] = 0;
+            }
+            queue_index.second = queue_count[index];
+            
+            this->queue_indices[i] = queue_index;
+        }
+    }
+    
+    
     // until here queue_count have the last index of each family
     // after incrementing it holds the actual number of queues
+    for (auto map_it = queue_count.begin(); map_it != queue_count.cend(); ++map_it) {
+        ++map_it->second;
+    }
     
     
     

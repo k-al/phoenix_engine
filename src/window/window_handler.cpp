@@ -108,6 +108,13 @@ bool WindowHandler::ini (WindowHandler_ini ini) {
 //! give a valide oppurtunity to access the events without hide the mainloop here
 
 void WindowHandler::main_loop () {
+    
+    
+    if (!this->is_ini || this->main_window == nullptr) {
+        std::cerr << "error in WindowHandler::main_loop: initialize Window before use!\n";
+        return;
+    }
+    
     while (!glfwWindowShouldClose(this->main_window)) {
         glfwPollEvents();
     }
@@ -150,6 +157,8 @@ void WindowHandler::glfw_ini () {
     // for fullscreen give a Monitor
     // glfw_window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", glfwGetPrimaryMonitor(), nullptr);
     this->main_window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
+    
+    std::cout << "hey, initialized window\n" << this->main_window << std::endl;
 }
 
 void WindowHandler::glfw_cleanup () {
