@@ -5,6 +5,7 @@
 #include <set>
 #include <atomic>
 #include <typeinfo>
+#include <vector>
 
 #include "ivec.hpp"
 
@@ -36,7 +37,7 @@ class Thing {
     inline iVec2 lower_bound () const { return this->position - (this->collbox_size / 2); }
     
     // properties
-    bool solide;
+    std::function<bool(const Thing*)> is_solide;
     
     bool is_ooi;
     std::string ooiid;
@@ -53,7 +54,9 @@ class Thing {
     // background functions
     bool chunk_change (const iVec2& new_chunk); // returns false if chunk not found
     bool chunk_change (Chunk* new_chunk); // returns always true (chunk already found)
-    void load_suround ();
+    void load_suround () const;
+    std::vector<Thing*> coll_check (iVec2 direction = iVec2()) const;
+    std::vector<Thing*> coll_check (const iVec2& upper_bound, const iVec2& lower_bound, const std::vector<Thing*>& others) const;
     
     
     // informations used and managed by loader
