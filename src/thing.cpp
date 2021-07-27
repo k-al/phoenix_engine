@@ -8,13 +8,42 @@
 
 //# dont use full coll_check???
 bool Thing::move (const iVec2& direction) {
+    bool res = true;
+    std::vector<Thing*> collisions = this->coll_check(direction);
     
-    std::vector<Thing*> collisions = this->coll_check();
-    
-    if (this->is_solide(nullptr)) { // check if collides with something
+    // set back object if it would collide with something, that is solide to it
+    //# test if this has moved?
+    if (this->is_solide(nullptr)) { // check if can collide with something
+        iVec2 temp_upper = this->upper_bound() + direction;
+        iVec2 temp_lower = this->lower_bound() + direction;
+        
         for (const Thing* coll : collisions) {
             if (this->is_solide(coll) && coll->is_solide(this)) {
+                res = false; // collided with something, so aimed position is probably not reachable
+                int64_t xdiff = 0;
+                int64_t ydiff = 0;
+                // the real work is done after the '&&'
+                if (direction.x < 0 && (xdiff = coll->upper_bound().x - temp_lower.x) < 0) {
+                    xdiff = 0;
+                } else if (direction.x > 0 && (xdiff = coll->lower_bound().x - temp_upper.x) > 0) {
+                    xdiff = 0;
+                }
+                if (direction.y < 0 && (ydiff = coll->upper_bound().y - temp_lower.y) < 0) {
+                    ydiff = 0;
+                } else if (direction.y > 0 && (ydiff = coll->lower_bound().y - temp_upper.y) > 0) {
+                    ydiff = 0;
+                }
                 
+                //? push obj here
+                
+                // correct the new position so hopefully no collision occurs
+                if (abs(xdiff) < abs(ydiff)) {
+                    temp_lower.x += xdiff;
+                    temp_upper.x += xdiff;
+                } else {
+                    temp_lower.y += ydiff;
+                    temp_upper.y += ydiff;
+                }
             }
         }
     }
@@ -87,7 +116,22 @@ std::vector<Thing*> Thing::coll_check (iVec2 direction) const {
             res.push_back(other);
         }
     }
+    return res;
+}
+
+std::vector<Thing*> Thing::coll_check (const iVec2& upper_bound, const iVec2& lower_bound, const std::vector<Thing*>& others) const {
+    std::vector<Thing*> res;
     
+    for (Thing* other : others) {
+        //# store other.X_bounds temporaly, so it doesnt compute twice
+        if (upper_bound.x > other->lower_bound().x
+            && lower_bound.x < other->upper_bound().x
+            && upper_bound.y > other->lower_bound().y
+            && lower_bound.y < other->upper_bound().y
+        ) {
+            res.push_back(other);
+        }
+    }
     return res;
 }
 
