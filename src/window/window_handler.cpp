@@ -5,69 +5,9 @@
 #include <iostream>
 #include <exception>
 #include <string>
-#include <cstring>
 
+#include "c_helper.hpp"
 #include "window_handler.hpp"
-
-//! problem with wrapper
-struct CstringArr {
-    char** array;
-    uint32_t length = 0;
-    
-    ~CstringArr () {
-        this->clear();
-    }
-    
-    bool set_array (std::vector<std::string> input) {
-        
-        std::cout << "set_array in\n";
-        
-        // dont overwrite dierectly, because memory must be freed
-        if (length != 0) {
-            this->clear();
-        }
-        
-        this->array = new char*[input.size() + 1];
-        this->array[input.size()] = nullptr;
-        
-        // use this->length as iterator to have always the number of allocated list elements saved
-        for (/*length is 0*/; this->length < input.size(); ++this->length) {
-            char* temp;
-            try {
-                temp = new char[input[this->length].size() + 1];
-            } catch (std::bad_alloc e) {
-                break;
-            }
-            strncpy(temp, input[this->length].c_str(), input[this->length].size());
-            temp[input[this->length].size()] = '\0';
-            this->array[this->length] = temp;
-        }
-        
-        std::cout << "set_array out\n";
-        
-        // return if all the required allocations are sucessfull
-        return this->length = input.size();
-    }
-    
-    void clear () {
-        // free all the allocated things
-        if (this->length > 0) {
-            for (uint32_t i = 0; i < this->length; ++i) {
-                delete[] array[i];
-            }
-            delete[] array;
-            
-            this->length = 0;
-        }
-    }
-    
-    // release the ownership of the array
-    // caller must take care of the freeing
-    char** release () {
-        this->length = 0;
-        return this->array;
-    }
-};
 
 WindowHandler::WindowHandler () {
     
@@ -108,6 +48,13 @@ bool WindowHandler::ini (WindowHandler_ini ini) {
 //! give a valide oppurtunity to access the events without hide the mainloop here
 
 void WindowHandler::main_loop () {
+    
+    
+    if (!this->is_ini || this->main_window == nullptr) {
+        std::cerr << "error in WindowHandler::main_loop: initialize Window before use!\n";
+        return;
+    }
+    
     while (!glfwWindowShouldClose(this->main_window)) {
         glfwPollEvents();
     }
@@ -150,6 +97,8 @@ void WindowHandler::glfw_ini () {
     // for fullscreen give a Monitor
     // glfw_window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", glfwGetPrimaryMonitor(), nullptr);
     this->main_window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
+    
+    std::cout << "hey, initialized window\n" << this->main_window << std::endl;
 }
 
 void WindowHandler::glfw_cleanup () {
