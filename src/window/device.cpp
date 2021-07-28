@@ -8,6 +8,8 @@
 // #define GLFW_INCLUDE_VULKAN // included by .hpp
 // #include <GLFW/glfw3.h> // included by .hpp
 
+#include "c_helper.hpp"
+
 #include "device.hpp"
 
 #include <iostream>
@@ -128,6 +130,58 @@ bool Device::check_extension_support (VkPhysicalDevice device) {
 }
 
 void Device::logical_ini () {
+    
+    float priority = 1.0f;
+    
+    std::vector<VkDeviceQueueCreateInfo> queue_infos = this->get_queue_infos(&priority);
+    
+    // define all the device features, that are needed
+    //! check what they do
+    VkPhysicalDeviceFeatures deviceFeatures{};
+    
+    CstringArr c_val_layers;
+    CstringArr c_device_extensions;
+    if (!c_device_extensions.set_array(this->device_extensions)) {
+        std::cerr << "CstringArr for device_extensions didnt get initialized!\n";
+        exit(1);
+    }
+    
+    // define the logical device, that should be created
+    VkDeviceCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        createInfo.queueCreateInfoCount = static_cast<uint32_t>(queue_infos.size());
+        createInfo.pQueueCreateInfos = queue_infos.data();
+        createInfo.pEnabledFeatures = &deviceFeatures;
+        // device specific extensions
+        createInfo.enabledExtensionCount = c_device_extensions.length;
+        createInfo.ppEnabledExtensionNames = c_device_extensions.array;
+        
+        if (this->validation_layers.size() > 0) { // the two fields are deprecated and not used in up-to-date implementations
+            if (!c_val_layers.set_array(this->validation_layers)) {
+                std::cerr << "CstringArr for validation_layers didnt get initialized!\n";
+                exit(1);
+            }
+            
+            createInfo.enabledLayerCount = c_val_layers.length; // set them anyway
+            createInfo.ppEnabledLayerNames = c_val_layers.array;
+        } else {
+            createInfo.enabledLayerCount = 0;
+        }
+    
+    // finaly create the logical device
+    if (vkCreateDevice(this->physical, &createInfo, nullptr, &this->logical) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create logical device!");
+    }
+    
+    this->queues.resize(this->queue_indices.size());
+    
+    // get the queues from the device
+    for (size_t i = 0; i < this->queue_indices.size(); ++i) {
+        vkGetDeviceQueue(this->logical, this->queue_indices[i].first, this->queue_indices[i].second, &this->queues[i]);
+    }
+}
+
+std::vector<VkDeviceQueueCreateInfo> Device::get_queue_infos (float* priority) {
     std::vector<bool> got_index;
     
     // get the correct length
@@ -211,63 +265,23 @@ void Device::logical_ini () {
         }
     }
     
+    std::vector<VkDeviceQueueCreateInfo> queue_infos;
     
-    // until here queue_count have the last index of each family
-    // after incrementing it holds the actual number of queues
     for (auto map_it = queue_count.begin(); map_it != queue_count.cend(); ++map_it) {
+        // until here queue_count have the last index of each family
+        // after incrementing it holds the actual number of queues
         ++map_it->second;
-    }
-    
-    
-    
-    /*
-    // define all the queues, that are needed
-    QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
-    float queuePriority = 1.0f;
-    
-    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-    std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
-    
-    // because there are more than one queues, its an array wich is build in this loop
-    for (uint32_t queueFamily : uniqueQueueFamilies) {
-        VkDeviceQueueCreateInfo queueCreateInfo{};
-            queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-            queueCreateInfo.queueFamilyIndex = queueFamily;  // wich queue should be created
-            queueCreateInfo.queueCount = 1; // how many
-            queueCreateInfo.pQueuePriorities = &queuePriority; // priority from 0.0 to 1.0
         
-        queueCreateInfos.push_back(queueCreateInfo);
-    }
-    
-    // define all the device features, that are needed
-    VkPhysicalDeviceFeatures deviceFeatures{};
-    
-    // define the logical device, that should be created
-    VkDeviceCreateInfo createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-        createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
-        createInfo.pQueueCreateInfos = queueCreateInfos.data();
-        createInfo.pEnabledFeatures = &deviceFeatures;
-        // device specific extensions
-        createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
-        createInfo.ppEnabledExtensionNames = deviceExtensions.data();
+        VkDeviceQueueCreateInfo queue_info{};
+            queue_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            queue_info.queueFamilyIndex = map_it->first;  // wich queue should be created
+            queue_info.queueCount = map_it->second; // how many
+            queue_info.pQueuePriorities = priority; // priority from 0.0 to 1.0
         
-        if (enableValidationLayers) { // the two fields are deprecated and not used in up-to-date implementations
-            createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size()); // set them anyway
-            createInfo.ppEnabledLayerNames = validationLayers.data();
-        } else {
-            createInfo.enabledLayerCount = 0;
-        }
-    
-    // finaly create the logical device
-    if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create logical device!");
+        queue_infos.push_back(queue_info);
     }
     
-    // get the queues from the device
-    vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue); // get the 0'th graphic queue
-    vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue); // get the 0'th presentation queue
-    */
+    return queue_infos;
 }
 
 int32_t Device::check_queue_support (VkPhysicalDevice device) {

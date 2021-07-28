@@ -5,10 +5,10 @@ LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
 
 O_DEP = device.o window_handler.o window.o
 
-device.o: device.cpp device.hpp
+device.o: device.cpp device.hpp c_helper.hpp
 	g++ $(CFLAGS) -c -o device.o device.cpp
 
-window_handler.o: window_handler.cpp window_handler.hpp
+window_handler.o: window_handler.cpp window_handler.hpp c_helper.hpp
 	g++ $(CFLAGS) -c -o window_handler.o window_handler.cpp
 
 window.o: window.cpp window.hpp device.hpp window_handler.hpp

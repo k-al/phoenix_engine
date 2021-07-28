@@ -58,6 +58,8 @@ class Device {
     
     void logical_ini ();
     
+    std::vector<VkDeviceQueueCreateInfo> get_queue_infos (float* priority);
+    
 };
 
 #endif // Headder guard
