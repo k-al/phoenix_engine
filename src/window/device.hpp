@@ -9,7 +9,31 @@
 
 #include <set>
 #include <vector>
+#include <functional>
 
+// struct to specify queues
+struct QueueBatch {
+    QueueBatch () {};
+    
+    QueueBatch (std::vector<std::function<bool(VkQueueFamilyProperties, size_t fam_index)>> checks) {
+        this->checks = checks;
+    }
+    
+    void ini (std::vector<std::function<bool(VkQueueFamilyProperties, size_t fam_index)>> checks) {
+        this->checks = checks;
+    }
+    
+    std::vector<std::function<bool(VkQueueFamilyProperties, size_t fam_index)>> checks;
+    std::vector<bool> found;
+    std::vector<std::pair<size_t, size_t>> queue_indices; // pair of <family, index>
+    std::vector<VkQueue> queues;
+    
+    virtual bool is_complete ();
+    virtual bool test_batched (VkQueueFamilyProperties, size_t fam_index, size_t number); //# unify to 'int test(vec<props>)' that batch as many as possible
+    virtual bool test_unbatched (VkQueueFamilyProperties, size_t fam_index, size_t number);
+    virtual void test_reset ();
+    
+};
 
 struct Device_ini {
     VkInstance instance;

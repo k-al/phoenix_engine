@@ -14,6 +14,57 @@
 
 #include <iostream>
 
+bool QueueBatch::is_complete () {
+    if (this->found.empty())
+        return false;
+    bool complete = true;
+    for (bool i : this->found) {
+        complete = complete && i;
+    }
+    return complete;
+}
+
+bool QueueBatch::test_batched (VkQueueFamilyProperties props, size_t fam_index, size_t number) {
+    if (this->checks.empty()) {
+        std::cerr << "no queues specified!\n";
+        return true;
+    }
+    
+    for (auto check : this->checks) {
+        if (!check(props, fam_index))
+            return false;
+    }
+    
+    this->queue_indices.resize(this->checks.size(), std::pair<size_t, size_t>(fam_index, number));
+    return true;
+}
+
+bool QueueBatch::test_unbatched (VkQueueFamilyProperties props, size_t fam_index, size_t number) {
+    if (this->checks.empty()) {
+        std::cerr << "no queues specified!\n";
+        return true;
+    }
+    
+    bool res = false;
+    this->found.resize(this->checks.size(), false); // if it was empty, fill with false (otherwise hold the data)
+    this->queue_indices.resize(this->checks.size());
+    
+    for (size_t i = 0; i < this->found.size(); ++i) {
+        if (!this->found[i] && this->checks[i](props, fam_index)) {
+            this->queue_indices[i] = std::pair<size_t, size_t>(fam_index, number);
+            this->found[i] = true;
+            res = true;
+        }
+    }
+    
+    return res;
+}
+
+void QueueBatch::test_reset () {
+    this->queue_indices.clear();
+    this->found.clear();
+}
+
 
 Device::Device () {}
 

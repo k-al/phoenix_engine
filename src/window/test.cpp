@@ -9,8 +9,6 @@
 #include <typeinfo>
 
 int main () {
-    std::cout << typeid(VK_QUEUE_GRAPHICS_BIT).name() << std::endl;
-    
     Window main_window;
     
     main_window.ini();
