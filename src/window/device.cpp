@@ -14,6 +14,7 @@
 
 #include <iostream>
 
+// use only in context with test_unbatched
 bool QueueBatch::is_complete () {
     if (this->found.empty())
         return false;
@@ -36,6 +37,7 @@ bool QueueBatch::test_batched (VkQueueFamilyProperties props, size_t fam_index, 
     }
     
     this->queue_indices.resize(this->checks.size(), std::pair<size_t, size_t>(fam_index, number));
+    this->found.assign(this->checks.size(), true);
     return true;
 }
 
@@ -224,22 +226,23 @@ void Device::logical_ini () {
         throw std::runtime_error("failed to create logical device!");
     }
     
-    this->queues.resize(this->queue_indices.size());
-    
     // get the queues from the device
-    for (size_t i = 0; i < this->queue_indices.size(); ++i) {
-        vkGetDeviceQueue(this->logical, this->queue_indices[i].first, this->queue_indices[i].second, &this->queues[i]);
+    uint32_t i = 0;
+    for (auto batch : this->queue_batches) {
+        this->queues.resize(this->queues.size() + batch->queue_indices.size()); //# i know its a resize in a loop
+        for (uint32_t j = 0; j < batch->queue_indices.size(); ++j) {
+            vkGetDeviceQueue(this->logical, batch->queue_indices[j].first, batch->queue_indices[j].second, &this->queues[i]);
+            batch->queues[j] =&this->queues[i];
+            ++i;
+        }
     }
 }
 
 std::vector<VkDeviceQueueCreateInfo> Device::get_queue_infos (float* priority) {
     std::vector<bool> got_index;
     
-    // get the correct length
-    this->queue_indices.resize(this->queue_req.size());
-    got_index.resize(this->queue_req.size(), false);
-    
-    std::map<size_t, size_t> queue_count;
+    // keep track of how many queues are needed
+    std::vector<size_t> queue_count;
     
     // get the nuber of supported queues
     uint32_t device_support_count = 0;
@@ -249,84 +252,45 @@ std::vector<VkDeviceQueueCreateInfo> Device::get_queue_infos (float* priority) {
     std::vector<VkQueueFamilyProperties> device_support(device_support_count);
     vkGetPhysicalDeviceQueueFamilyProperties(this->physical, &device_support_count, device_support.data());
     
-    // get the indices for full batches
-    for (const std::set<size_t> batch : this->queue_batch) {
-        bool found = false;
-        uint32_t batch_flags = 0;
-        size_t index = 0;
-        
-        // get all flags of the batch together
-        for (auto set_it = batch.begin(); set_it != batch.end(); set_it++) {
-            batch_flags = batch_flags | this->queue_req[*set_it];
-        }
-        // test the whole flagset
-        for (const auto supported : device_support) {
-            if (batch_flags & supported.queueFlags == batch_flags) {
-                found = true;
+    queue_count.resize(device_support_count, 0); // initialize with no needed queue
+    
+    for (auto batch : this->queue_batches) { // get all batches
+        // get the indices for full batches
+        for (uint32_t i = 0; i < device_support_count; ++i) { // show them all queues
+            if (batch->test_batched(device_support[i], i, queue_count[i])) {
+                ++queue_count[i];
                 break;
             }
-            ++index;
         }
-        if (found) {
-            std::pair<size_t, size_t> queue_index;
-            queue_index.first = index;
-            
-            if (queue_count.count(index) > 0) {
-                ++queue_count[index];
-            } else {
-                queue_count[index] = 0;
-            }
-            queue_index.second = queue_count[index];
-            
-            for (auto set_it = batch.begin(); set_it != batch.end(); set_it++) {
-                this->queue_indices[*set_it] = queue_index;
-                got_index[*set_it] = true;
+        
+        // test if ready with batch
+        if (batch->is_complete())
+            continue;
+        
+        // get the single queues
+        for (uint32_t i = 0; i < device_support_count; ++i) { // show them all queues
+            if (batch->test_unbatched(device_support[i], i, queue_count[i])) {
+                ++queue_count[i];
             }
         }
-    }
-    
-    // get the single queues
-    for (size_t i = 0; i < this->queue_req.size(); ++i) {
-        if (!got_index[i]) { // if it wasnt in one of the patches
-            size_t index = 0;
-            
-            for (const auto supported : device_support) {
-                if (queue_req[i] & supported.queueFlags == queue_req[i]) {
-                    got_index[i] = true;
-                    break;
-                }
-                ++index;
-            }
-            if (!got_index[i]) {
-                //? throw
-                exit(1); // but device_suitability said everything was supported
-            }
-            
-            std::pair<size_t, size_t> queue_index;
-            queue_index.first = index;
-            
-            if (queue_count.count(index) > 0) {
-                ++queue_count[index];
-            } else {
-                queue_count[index] = 0;
-            }
-            queue_index.second = queue_count[index];
-            
-            this->queue_indices[i] = queue_index;
+        
+        // die if still not ready
+        if (!batch->is_complete()) {
+            std::cerr << "device_suitability said everything was supported, but wasnt\n";
+            exit(1); // but device_suitability said everything was supported
         }
     }
     
     std::vector<VkDeviceQueueCreateInfo> queue_infos;
     
-    for (auto map_it = queue_count.begin(); map_it != queue_count.cend(); ++map_it) {
-        // until here queue_count have the last index of each family
-        // after incrementing it holds the actual number of queues
-        ++map_it->second;
+    for (uint32_t i = 0; i < device_support_count; ++i) {
+        if (queue_count[i] == 0)
+            continue;
         
         VkDeviceQueueCreateInfo queue_info{};
             queue_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-            queue_info.queueFamilyIndex = map_it->first;  // wich queue should be created
-            queue_info.queueCount = map_it->second; // how many
+            queue_info.queueFamilyIndex = i;  // wich queue should be created
+            queue_info.queueCount = queue_count[i]; // how many
             queue_info.pQueuePriorities = priority; // priority from 0.0 to 1.0
         
         queue_infos.push_back(queue_info);
@@ -336,8 +300,6 @@ std::vector<VkDeviceQueueCreateInfo> Device::get_queue_infos (float* priority) {
 }
 
 int32_t Device::check_queue_support (VkPhysicalDevice device) {
-    std::cout << "check_queue_support in\n";
-    
     // get the nuber of supported queues
     uint32_t device_support_count = 0;
     vkGetPhysicalDeviceQueueFamilyProperties(device, &device_support_count, nullptr);
@@ -347,43 +309,26 @@ int32_t Device::check_queue_support (VkPhysicalDevice device) {
     vkGetPhysicalDeviceQueueFamilyProperties(device, &device_support_count, device_support.data());
     
     // first test if all requirements are supported
-    for (const auto requirement : this->queue_req) {
-        bool found = false;
-        
-        for (const auto supported : device_support) {
-            if (requirement & supported.queueFlags) {
-                found = true;
-                break;
-            }
+    for (auto batch : this->queue_batches) { // get all batches
+        for (uint32_t i = 0; i < device_support_count; ++i) { // show them all queues
+            batch->test_unbatched(device_support[i], i, 0);
         }
-        if (!found) {
-            std::cout << "check_queue_support out\n";
+        if (!batch->is_complete()) { 
             return -1;
         }
+        batch->test_reset();
     }
     
     // test if batches could use one queue and based on that give extra device score
     int32_t res = 0;
-    for (const std::set<size_t> batch : this->queue_batch) {
-        bool found = false;
-        uint32_t batch_flags = 0;
-        
-        // get all flags of the batch together
-        for (auto set_it = batch.begin(); set_it != batch.end(); set_it++) {
-            batch_flags = batch_flags | this->queue_req[*set_it];
-        }
-        // test the whole flagset
-        for (const auto supported : device_support) {
-            if (batch_flags & supported.queueFlags == batch_flags) {
-                found = true;
+    for (auto batch : this->queue_batches) { // get all batches
+        for (uint32_t i = 0; i < device_support_count; ++i) { // show them all queues
+            if (batch->test_batched(device_support[i], i, 0)) {
+                res += 50; //? make it depending on batch size
                 break;
             }
         }
-        if (found) {
-            res += batch.size() * 20;
-        }
     }
-    std::cout << "check_queue_support out\n";
     
     return res;
 }

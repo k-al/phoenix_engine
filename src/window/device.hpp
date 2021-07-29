@@ -26,19 +26,18 @@ struct QueueBatch {
     std::vector<std::function<bool(VkQueueFamilyProperties, size_t fam_index)>> checks;
     std::vector<bool> found;
     std::vector<std::pair<size_t, size_t>> queue_indices; // pair of <family, index>
-    std::vector<VkQueue> queues;
+    std::vector<VkQueue*> queues;
     
-    virtual bool is_complete ();
-    virtual bool test_batched (VkQueueFamilyProperties, size_t fam_index, size_t number); //# unify to 'int test(vec<props>)' that batch as many as possible
-    virtual bool test_unbatched (VkQueueFamilyProperties, size_t fam_index, size_t number);
-    virtual void test_reset ();
+    bool is_complete ();
+    bool test_batched (VkQueueFamilyProperties, size_t fam_index, size_t number); //# unify to 'int test(vec<props>)' that batch as many as possible
+    bool test_unbatched (VkQueueFamilyProperties, size_t fam_index, size_t number);
+    void test_reset ();
     
 };
 
 struct Device_ini {
     VkInstance instance;
-    std::vector<VkQueueFlagBits> queue_bits;
-    std::vector<std::set<size_t>> queue_batch;
+    std::vector<QueueBatch*> queue_batches;
     std::vector<std::string> device_extensions;
     std::vector<std::string> validation_layers;
 };
@@ -48,10 +47,8 @@ class Device {
     VkPhysicalDevice physical = VK_NULL_HANDLE; // the used graphic card
     VkDevice logical; // the logical instance of the used graphic card
     
-    std::vector<VkQueueFlagBits> queue_req;
-    std::vector<std::set<size_t>> queue_batch;
+    std::vector<QueueBatch*> queue_batches;
     std::vector<VkQueue> queues;
-    std::vector<std::pair<size_t, size_t>> queue_indices; // pair of <family, index>
     std::vector<std::string> device_extensions;
     std::vector<std::string> validation_layers;
     
