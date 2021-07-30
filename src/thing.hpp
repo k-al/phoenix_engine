@@ -20,7 +20,7 @@ class Thing {
     
     Thing ();
     
-    virtual ~Thing ();
+    virtual ~Thing () {};
     
     //! get the loader from somewhere
     Loader* loader;

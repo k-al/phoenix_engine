@@ -6,6 +6,8 @@
 
 #include "thing.hpp"
 
+Thing::Thing () {};
+
 //# dont use full coll_check???
 bool Thing::move (const iVec2& direction) {
     bool res = true;

@@ -3,11 +3,13 @@
 
 #include "thing.hpp"
 
-struct Wall: Thing {
+struct Wall: public Thing {
     
+    Wall ();
+    ~Wall ();
     
-    void tick (uint64_t tick_time);
-    uint16_t push (Thing* pusher, uint16_t dist, uint16_t dir);
+    static void tick (uint64_t tick_time);
+    static uint16_t push (Thing* pusher, uint16_t dist, uint16_t dir);
     
 };
 

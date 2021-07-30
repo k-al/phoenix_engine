@@ -8,6 +8,7 @@
 
 #include "ivec.hpp"
 #include "server.hpp"
+#include "wall.hpp"
 
 int main() {
     std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " is here\n";
@@ -23,6 +24,10 @@ int main() {
         myfirstserver.loader.generate(iVec2(2, i));
         myfirstserver.loader.wake(iVec2(2, i));
     }
+    
+    Wall entity = Wall();
+    
+    myfirstserver.map.chunks[iVec2(2, 0)].add(&entity);
     
     std::this_thread::sleep_for (std::chrono::milliseconds(50));
     
