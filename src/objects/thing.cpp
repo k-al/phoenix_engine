@@ -1,12 +1,13 @@
 
-#include "chunk.hpp"
+#include "server/chunk.hpp"
+#include "server/server.hpp"
 #include "ivec.hpp"
-#include "plan.hpp"
-#include "loader.hpp"
 
 #include "thing.hpp"
 
-Thing::Thing () {};
+Thing::Thing () {}
+
+Thing::Thing (Server* server) {this->server = server;}
 
 //# dont use full coll_check???
 bool Thing::move (const iVec2& direction) {
@@ -55,9 +56,9 @@ bool Thing::move (const iVec2& direction) {
 
 bool Thing::chunk_change (const iVec2& new_chunk_pos) {
     // find Chunk in chunk_it->second
-    auto map_it = this->map->chunks.find(new_chunk_pos);
+    auto map_it = this->server->chunks.find(new_chunk_pos);
     // tests, if chunk realy exists
-    if (map_it == this->map->chunks.end()) {
+    if (map_it == this->server->chunks.end()) {
         return false;
     } else {
         this->chunk_change(&map_it->second);
@@ -80,21 +81,21 @@ bool Thing::chunk_change (Chunk* new_chunk) {
 }
 
 void Thing::load_suround () const {
-    auto chunk_it = this->map->chunks.end();
+    auto chunk_it = this->server->chunks.end();
     iVec2 dif(0, 0);
     
     for (dif.x = -this->load_range; dif.x <= this->load_range; ++dif.x) {
         for (dif.y = this->load_range; dif.y <= this->load_range; ++dif.y) {
             // find Chunk in chunk_it->second
-            chunk_it = this->map->chunks.find(this->chunk->position + dif);
+            chunk_it = this->server->chunks.find(this->chunk->position + dif);
             // tests, if chunk already exists in map
-            if (chunk_it != this->map->chunks.end()) {
+            if (chunk_it != this->server->chunks.end()) {
                 if (!chunk_it->second.is_active()) {
-                    this->loader->wake(&chunk_it->second);
+                    this->server->wake(&chunk_it->second);
                 }
                 
             } else {
-                this->loader->load(this->chunk->position + dif);
+                this->server->load(this->chunk->position + dif);
             }
         }
     }

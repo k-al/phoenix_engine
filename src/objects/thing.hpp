@@ -11,22 +11,19 @@
 
 
 struct Chunk;
-struct Plan;
-struct Loader;
-
+struct Server;
 
 class Thing {
   public:
     
     Thing ();
+    Thing (Server* server);
     
     virtual ~Thing () {};
     
-    //! get the loader from somewhere
-    Loader* loader;
-    
     // localisation:
-    Plan* map;
+    Server* server;
+    uint16_t map;
     Chunk* chunk;
     iVec2 position;
     
@@ -49,7 +46,7 @@ class Thing {
     
     // basic interaction functions
     bool move (const iVec2& direction); // returns true if full length has been moved (nothing in the way)
-    bool teleport (iVec2 position, iVec2 chunk, Plan* map, bool force); // return true if destination is free (nothing in the way)
+    bool teleport (iVec2 position, iVec2 chunk, uint16_t map, bool force); // return true if destination is free (nothing in the way)
     
     // background functions
     bool chunk_change (const iVec2& new_chunk); // returns false if chunk not found
