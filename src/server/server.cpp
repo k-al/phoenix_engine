@@ -62,6 +62,39 @@ bool Server::start () {
     return true;
 }
 
+bool Server::load (iVec2 pos) {
+    //! load from memory
+    
+    //! this is ugly as hell but crates a pair iVec2(pos) Chunk(pos)
+    this->chunks.emplace(pos, pos);
+    
+    return this->chunks[pos].is_generated;
+}
+
+//? outsource complete function
+void Server::generate (iVec2 pos) {
+    //! give job to the world-generator
+    this->chunks[pos].is_generated = true;
+}
+
+void Server::wake (iVec2 pos) {
+    // find Chunk in chunk_it->second
+    auto chunk_it = this->chunks.find(pos);
+    // tests, if chunk realy exists
+    if (chunk_it != this->chunks.end()) {
+        this->wake(&chunk_it->second);
+    }
+}
+
+void Server::sleep (iVec2 pos) {
+    // find Chunk in chunk_it->second
+    auto chunk_it = this->chunks.find(pos);
+    // tests, if chunk realy exists
+    if (chunk_it != this->chunks.end()) {
+        this->sleep(&chunk_it->second);
+    }
+}
+
 
 // END class Server
 

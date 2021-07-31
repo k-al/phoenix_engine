@@ -19,7 +19,9 @@ class Server {
   public:
     // maps
     struct MapKeyHasher{
-        int64_t operator()(const iVec2& k) const;
+        int64_t operator()(const iVec2& k) const {
+            return k.x << 32 | k.y;
+        }
     };
     
     std::unordered_map<iVec2, Chunk, MapKeyHasher> chunks;
