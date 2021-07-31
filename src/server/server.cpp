@@ -4,11 +4,8 @@
 
 #include <iostream>
 
-#include "chunk.hpp"
-#include "thing.hpp"
+#include "server/chunk.hpp"
 #include "multh_listworker.hpp"
-// #include "plan.hpp" // eingebunden durch .hpp
-// #include "loader.hpp" // eingebunden durch .hpp
 
 #include "server.hpp"
 
@@ -45,20 +42,6 @@ bool Server::ini (Server_ini ini) {
         return false;
     }
     
-    std::cout << "Serverworker initialzed with " << lw_ini.cycle_time.count() << "\n";
-    
-    Loader_ini lo_ini;
-    lo_ini.map = &this->map;
-    lo_ini.saving_loc = "saves/funny_world";
-    lo_ini.server_worker = &this->worker;
-    
-    if (!this->loader.ini(lo_ini)) {
-        std::cout << "Server initialisation fails due to initalisation of Loader fails in Line " << __LINE__ << " of file " << __FILE__ << std::endl;
-        return false;
-    }
-    
-//     Loader* Thing::loader::;
-    
     this->is_ini = true;
     std::cout << "Server initialzed\n";
     return true;
@@ -73,11 +56,43 @@ bool Server::start () {
     }
     
     this->worker.start();
-    this->loader.start();
     
     std::cout << "Server is started\n";
     
     return true;
+}
+
+bool Server::load (iVec2 pos) {
+    //! load from memory
+    
+    //! this is ugly as hell but crates a pair iVec2(pos) Chunk(pos)
+    this->chunks.emplace(pos, pos);
+    
+    return this->chunks[pos].is_generated;
+}
+
+//? outsource complete function
+void Server::generate (iVec2 pos) {
+    //! give job to the world-generator
+    this->chunks[pos].is_generated = true;
+}
+
+void Server::wake (iVec2 pos) {
+    // find Chunk in chunk_it->second
+    auto chunk_it = this->chunks.find(pos);
+    // tests, if chunk realy exists
+    if (chunk_it != this->chunks.end()) {
+        this->wake(&chunk_it->second);
+    }
+}
+
+void Server::sleep (iVec2 pos) {
+    // find Chunk in chunk_it->second
+    auto chunk_it = this->chunks.find(pos);
+    // tests, if chunk realy exists
+    if (chunk_it != this->chunks.end()) {
+        this->sleep(&chunk_it->second);
+    }
 }
 
 
