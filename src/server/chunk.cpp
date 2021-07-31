@@ -1,20 +1,16 @@
 #include <iostream>
-#include <thread> // just for debugging
 // #include <vector> // eingebunden durch .hpp
 // #include <atomic> // eingebunden durch .hpp
 // #include <set> // eingebunden durch .hpp
 
-
-#include "thing.hpp"
+#include "objects/thing.hpp"
 // #include "ivec.hpp" // eingebunden durch .hpp
 
 #include "chunk.hpp"
 
+#include <thread> // just for debugging
+#include <iostream>
 
-// BEGIN struct Chunk
-
-//! for locking in multithread
-//! std::shared_mutex lock;
 
 Chunk::Chunk () {
     this->is_generated = false;
