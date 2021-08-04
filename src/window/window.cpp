@@ -24,22 +24,41 @@ bool Window::ini () {
         this->set_validation_layers();
     }
     
-    std::cout << "got before window_handler_ini\n";
-    
     this->window_handler.ini(WindowHandler_ini(this->validation_layers));
     
-    std::cout << "got after window_handler_ini\n";
-    
-    this->create_vulkan_instance();
+    std::vector<QueueBatch> queues = this->define_queues();
     
     Device_ini dev_ini;
-//     dev_ini.device_extensions = &this->window_handler.glfw_get_vk_extensions(true);
-//     dev_ini.validation_layers = &this->validation_layers;
+        dev_ini.instance = this->window_handler.instance;
+        dev_ini.device_extensions = this->window_handler.glfw_get_vk_extensions(true);
+        dev_ini.validation_layers = this->validation_layers;
+        dev_ini.queue_batches = &queues; //this->define_queues();
     
+    this->device.ini(dev_ini);
     
     return true;
 }
 
-void Window::create_vulkan_instance () {
+std::vector<QueueBatch> Window::define_queues () {
+    std::vector<QueueBatch> res;
     
+    {
+        // get a graphics queue
+        std::vector<std::function<bool(VkPhysicalDevice, VkQueueFamilyProperties, size_t fam_index)>> test_function;
+        test_function.push_back( [](VkPhysicalDevice device, VkQueueFamilyProperties props, size_t fam_index)->bool{
+            return props.queueFlags & VK_QUEUE_GRAPHICS_BIT;
+        });
+        
+        // get a displaying queue
+//         VkSurfaceKHR surface = this->window_handler.surface; // therefor get the display surface
+        test_function.push_back( [/*surface*/](VkPhysicalDevice device, VkQueueFamilyProperties props, size_t fam_index)->bool{
+            VkBool32 presentSupport = false;
+//             vkGetPhysicalDeviceSurfaceSupportKHR(device, fam_index, surface, &presentSupport);
+            return true;
+        });
+        
+        res.push_back(QueueBatch(test_function));
+    }
+    
+    return res;
 }

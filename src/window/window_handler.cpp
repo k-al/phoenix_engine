@@ -15,7 +15,6 @@ WindowHandler::WindowHandler () {
 
 WindowHandler::~WindowHandler () {
     
-    
     //? cleanup this->glfw_extensions i guess
 }
 
