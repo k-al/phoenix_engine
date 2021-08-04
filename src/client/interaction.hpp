@@ -1,2 +1,6 @@
 
+#include <SFML/>
 
+class Interaction {
+    
+}
