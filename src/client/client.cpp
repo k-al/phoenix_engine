@@ -1,15 +1,19 @@
 
-#include <SFML/Graphics.hpp> // included by .hpp
+// #include <SFML/Graphics.hpp> // included by .hpp
 
+#include "server/chunk.hpp"
+#include "objects/visible.hpp"
 
 #include "client.hpp"
+
+Client::Client () {}
 
 Client::~Client () {
     // cleanup
 }
 
 void Client::run () {
-    this->main_window.create(sf::VideoMode::getFullscreenModes()[0], "Tarnish");
+    this->main_window.create(sf::VideoMode::getFullscreenModes()[1], "Tarnish"/*, sf::Style::Fullscreen*/);
     
     
     sf::Event event;
@@ -24,5 +28,15 @@ void Client::run () {
         
         
         
+    }
+}
+
+void Client::draw () {
+    for (Chunk* chunk : this->active_chunks) {
+        for (Thing* thing : chunk->objects) {
+            if (Visible* visible = dynamic_cast<Visible*>(thing)) {
+                this->active_sprites.push_back(&visible->sprite);
+            }
+        }
     }
 }

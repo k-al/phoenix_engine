@@ -5,16 +5,19 @@ class Server;
 class Thing;
 
 class Client {
-    
+  public:
     Server* servre = nullptr;
     Thing* follow = nullptr;
     
     sf::Window main_window;
-    
     sf::View main_view;
     
+    std::vector<sf::Sprite*> active_sprites;
     
-    Client () {}
+    std::vector<Chunk*> active_chunks;
+    
+    
+    Client ();
     
     ~Client ();
     
@@ -24,5 +27,7 @@ class Client {
     void run ();
     
     void change_follow (Thing*);
+    
+    void draw ();
     
 };

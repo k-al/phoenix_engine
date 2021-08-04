@@ -9,6 +9,7 @@
 #include "ivec.hpp"
 #include "server/server.hpp"
 #include "objects/wall.hpp"
+#include "client/client.hpp"
 
 int main() {
     std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " is here\n";
@@ -29,16 +30,11 @@ int main() {
     
     myfirstserver.chunks[iVec2(2, 0)].add(&entity);
     
-    std::this_thread::sleep_for (std::chrono::milliseconds(50));
+    Client myfirstclient = Client();
     
-    for (uint64_t i = 20000; i < 30000; ++i) {
-        myfirstserver.sleep(iVec2(2, i));
-    }
+    myfirstclient.run();
     
-    
-    std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " have slept and unload 1\n";
-    std::this_thread::sleep_for (std::chrono::milliseconds(200));
-    
+//     std::this_thread::sleep_for (std::chrono::milliseconds(250));
     
     
 //     std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " have slept and unload 2\n";
