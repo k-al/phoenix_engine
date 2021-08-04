@@ -76,6 +76,8 @@ Device::~Device () {
     if (this->is_ini) {
         vkDestroyDevice(this->logical, nullptr);
     }
+    
+    std::cout << "got here\n";
 }
 
 //! give needed queues, device extensions, (and maybe validation layers)
@@ -88,6 +90,7 @@ bool Device::ini (Device_ini ini) {
         this->pick_physical(ini.instance);
     }
     
+    this->logical_ini();
     
     this->is_ini = true;
     return true;
@@ -313,7 +316,8 @@ int32_t Device::check_queue_support (VkPhysicalDevice device) {
         for (uint32_t i = 0; i < device_support_count; ++i) { // show them all queues
             batch->test_unbatched(device_support[i], i, 0);
         }
-        if (!batch->is_complete()) { 
+        if (!batch->is_complete()) {
+            std::cout << "not all queues supported from " << this->queue_batches.size() << std::endl;
             return -1;
         }
         batch->test_reset();

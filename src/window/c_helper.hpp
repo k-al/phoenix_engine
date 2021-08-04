@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include <iostream>
+
 struct CstringArr {
     char** array;
     uint32_t length = 0;
@@ -27,7 +29,7 @@ struct CstringArr {
             try {
                 temp = new char[input[this->length].size() + 1];
             } catch (std::bad_alloc e) {
-                break;
+                throw(e);
             }
             strncpy(temp, input[this->length].c_str(), input[this->length].size());
             temp[input[this->length].size()] = '\0';
@@ -35,7 +37,7 @@ struct CstringArr {
         }
         
         // return if all the required allocations are sucessfull
-        return this->length = input.size();
+        return this->length == input.size();
     }
     
     void clear () {

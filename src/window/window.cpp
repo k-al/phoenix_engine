@@ -35,6 +35,7 @@ bool Window::ini () {
     
     
     Device_ini dev_ini;
+        dev_ini.instance = this->window_handler.instance;
         dev_ini.device_extensions = this->window_handler.glfw_get_vk_extensions(true);
         dev_ini.validation_layers = this->validation_layers;
         dev_ini.queue_batches = std::vector<QueueBatch*>(); //this->define_queues();
