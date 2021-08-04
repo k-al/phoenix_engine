@@ -14,7 +14,6 @@ WindowHandler::WindowHandler () {
 }
 
 WindowHandler::~WindowHandler () {
-    std::cout << "live on\n";
     
     //? cleanup this->glfw_extensions i guess
 }

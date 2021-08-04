@@ -15,29 +15,29 @@
 struct QueueBatch {
     QueueBatch () {};
     
-    QueueBatch (std::vector<std::function<bool(VkQueueFamilyProperties, size_t fam_index)>> checks) {
+    QueueBatch (std::vector<std::function<bool(VkPhysicalDevice, VkQueueFamilyProperties, size_t fam_index)>> checks) {
         this->checks = checks;
     }
     
-    void ini (std::vector<std::function<bool(VkQueueFamilyProperties, size_t fam_index)>> checks) {
+    void ini (std::vector<std::function<bool(VkPhysicalDevice, VkQueueFamilyProperties, size_t fam_index)>> checks) {
         this->checks = checks;
     }
     
-    std::vector<std::function<bool(VkQueueFamilyProperties, size_t fam_index)>> checks;
+    std::vector<std::function<bool(VkPhysicalDevice, VkQueueFamilyProperties, size_t fam_index)>> checks;
     std::vector<bool> found;
     std::vector<std::pair<size_t, size_t>> queue_indices; // pair of <family, index>
     std::vector<VkQueue*> queues;
     
     bool is_complete ();
-    bool test_batched (VkQueueFamilyProperties, size_t fam_index, size_t number); //# unify to 'int test(vec<props>)' that batch as many as possible
-    bool test_unbatched (VkQueueFamilyProperties, size_t fam_index, size_t number);
+    bool test_batched (VkPhysicalDevice, VkQueueFamilyProperties, size_t fam_index, size_t number); //# unify to 'int test(vec<props>)' that batch as many as possible
+    bool test_unbatched (VkPhysicalDevice, VkQueueFamilyProperties, size_t fam_index, size_t number);
     void test_reset ();
     
 };
 
 struct Device_ini {
     VkInstance instance;
-    std::vector<QueueBatch*> queue_batches;
+    std::vector<QueueBatch>* queue_batches;
     std::vector<std::string> device_extensions;
     std::vector<std::string> validation_layers;
 };
@@ -47,7 +47,7 @@ class Device {
     VkPhysicalDevice physical = VK_NULL_HANDLE; // the used graphic card
     VkDevice logical; // the logical instance of the used graphic card
     
-    std::vector<QueueBatch*> queue_batches;
+    std::vector<QueueBatch>* queue_batches;
     std::vector<VkQueue> queues;
     std::vector<std::string> device_extensions;
     std::vector<std::string> validation_layers;

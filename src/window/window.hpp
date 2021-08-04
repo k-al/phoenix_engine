@@ -26,12 +26,11 @@ class Window {
     
     Window ();
     
-    ~Window ();
+    virtual ~Window ();
     
     bool ini ();
     
-    void create_vulkan_instance ();
-    
+    virtual std::vector<QueueBatch> define_queues ();
     
 };
 
