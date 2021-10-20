@@ -19,6 +19,7 @@ bool Thing::move (const iVec2& direction) {
     if (this->is_solide(nullptr)) { // check if can collide with something
         iVec2 temp_upper = this->upper_bound() + direction;
         iVec2 temp_lower = this->lower_bound() + direction;
+        iVec2 temp_dir = direction;
         
         for (const Thing* coll : collisions) {
             if (this->is_solide(coll) && coll->is_solide(this)) {
@@ -43,12 +44,16 @@ bool Thing::move (const iVec2& direction) {
                 if (abs(xdiff) < abs(ydiff)) {
                     temp_lower.x += xdiff;
                     temp_upper.x += xdiff;
+                    temp_dir.x += xdiff;
                 } else {
                     temp_lower.y += ydiff;
                     temp_upper.y += ydiff;
+                    temp_dir.y += ydiff;
                 }
             }
         }
+        
+        // relocation here with temp_dir
     }
     
     return true;
@@ -61,18 +66,19 @@ bool Thing::chunk_change (const iVec2& new_chunk_pos) {
     if (map_it == this->server->chunks.end()) {
         return false;
     } else {
-        this->chunk_change(&map_it->second);
+        this->chunk_change(&map_it->second); //? test what version this calls in inheritance
         return true;
     }
 }
 
 bool Thing::chunk_change (Chunk* new_chunk) {
     
+    // change the owner chunk
     new_chunk->add(this);
+    this->chunk = new_chunk;
     this->chunk->remove(this);
     
-    this->chunk = new_chunk;
-    
+    // if object loads surounding let it do it
     if (this->load_range != 0) {
         this->load_suround();
     }

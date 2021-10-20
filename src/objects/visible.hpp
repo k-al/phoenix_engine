@@ -1,4 +1,7 @@
 
+#ifndef VISIBLE_HEADER
+#define VISIBLE_HEADER
+
 #include "ivec.hpp"
 #include "objects/thing.hpp"
 
@@ -19,5 +22,10 @@ class Visible : public Thing {
     bool load_texture ();
     void unload_texture ();
     
+    bool chunk_change (Chunk* new_chunk); // manage loading/unloading of the sprite, dependent on in which chunk it changes
+    
     
 };
+
+
+#endif // VISIBLE_HEADER

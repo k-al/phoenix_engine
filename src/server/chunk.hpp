@@ -15,6 +15,8 @@ struct Chunk {
     
     iVec2 position;
     bool is_generated;
+    bool is_loaded;
+    bool is_visible;
     
     std::set<Thing*> loaded_by;
     
