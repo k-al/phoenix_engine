@@ -2,6 +2,8 @@
 
 #include "visible.hpp"
 
+#include "../server/chunk.hpp"
+
 bool Visible::chunk_change (Chunk* new_chunk) {
     if (this->chunk->is_visible) {
         if (!new_chunk->is_visible) {
@@ -12,4 +14,6 @@ bool Visible::chunk_change (Chunk* new_chunk) {
             // introduce object to renderer
         }
     }
+    
+    return true;
 }
