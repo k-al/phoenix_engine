@@ -2,13 +2,11 @@
 #ifndef CONTOLLABLE_HEADER
 #define CONTOLLABLE_HEADER
 
+#include <vector>
 
-template <typename T> // should inherent from Thing
-
-
-class Contollable {
+class Controllable {
   public:
-    virtual boolean
+    std::function<void(Thing* that, std::vector<bool> actions, iVec2 move_dir, iVec2 cursor_pos)> action;
 };
 
 

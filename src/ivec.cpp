@@ -64,6 +64,47 @@ void iVec2::operator-= (const iVec2 sub) {
     this->y -= sub.y;
 }
 
+iVec2 iVec2::operator<< (const unsigned int shift) const {
+    return iVec2(this->x << shift, this->y << shift);
+}
+
+void iVec2::operator<<= (const unsigned int shift) {
+    this->x <<= shift;
+    this->y <<= shift;
+}
+
+iVec2 iVec2::operator>> (const unsigned int shift) const {
+    uint64_t x;
+    uint64_t y;
+    uint64_t mask = (0xFFFFFFFFFFFFFFFF << (64 - shift));
+    
+    if (this->x < 0) {
+        x = (this->x >> shift) | mask;
+    } else {
+        x = this->x >> shift;
+    }
+    if (this->y < 0) {
+        y = (this->y >> shift) | mask;
+    } else {
+        y = this->y >> shift;
+    }
+    
+    return iVec2(x, y);
+}
+
+void iVec2::operator>>= (const unsigned int shift) {
+    uint64_t mask = (0xFFFFFFFFFFFFFFFF << (64 - shift));
+    if (this->x < 0) {
+        this->x = (this->x >> shift) | mask;
+    } else {
+        this->x = this->x >> shift;
+    }
+    if (this->y < 0) {
+        this->y = (this->y >> shift) | mask;
+    } else {
+        this->y = this->y >> shift;
+    }
+}
 
 sf::Vector2f iVec2::as_vec2f () const {
     return sf::Vector2f(this->x, this->y);

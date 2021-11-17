@@ -1,4 +1,4 @@
-FILES = thing.o wall.o visible.o
+FILES = thing.o wall.o visible.o player.o
 
 build: $(FILES)
 
@@ -13,6 +13,9 @@ wall.o: wall.cpp wall.hpp visible.hpp thing.hpp ../ivec.hpp
 visible.o: visible.cpp visible.hpp thing.hpp ../ivec.hpp
 	g++ $(CFLAGS) $(INCLUDES) -c -o visible.o visible.cpp
 	cp visible.o ..
+
+player.o: player.cpp player.hpp visible.hpp controllable.hpp ../client/interaction.hpp
+	g++ $(CFLAGS) $(INCLUDES) -c -o player.o player.cpp
 
 clean:
 	rm *.o

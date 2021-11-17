@@ -53,10 +53,24 @@ bool Thing::move (const iVec2& direction) {
             }
         }
         
+        this->position += temp_dir;
+        
+        static const int64_t overflow_bitmask = ~((Chunk::coo_max * 2) + 1); //? safe, that it isnt '- 1'
+        
+//         if () {
+//             
+//         }
+        
+        if (this->position.x > Chunk::coo_max) {
+            
+        } else if (this->position.x < Chunk::coo_min) {
+            
+        }
+        
         // relocation here with temp_dir
     }
     
-    return true;
+    return res;
 }
 
 bool Thing::chunk_change (const iVec2& new_chunk_pos) {
