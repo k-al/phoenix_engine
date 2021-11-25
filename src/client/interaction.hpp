@@ -1,7 +1,10 @@
+// header guard
+#ifndef INTERACTION_HEADER
+#define INTERACTION_HEADER
 
 #include <vector>
 
-// #include <SFML/Window>
+#include <SFML/Window.hpp>
 
 #include "../ivec.hpp"
 
@@ -32,8 +35,6 @@ class Interaction {
         count  // Must stay last. Used for array size
     };
     
-//     static uint64_t action_count = std::static_cast<uint64_t>(Action::count);
-    
     virtual void set_default_bindings ();
     
     virtual std::vector<bool> get_actions ();
@@ -54,3 +55,5 @@ class KeyboardInteraction : public Interaction {
     iVec2 get_move_dir ();
     iVec2 get_cursor_pos ();
 };
+
+#endif // header guard

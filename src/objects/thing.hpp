@@ -37,7 +37,7 @@ class Thing {
     std::function<bool(const Thing*)> is_solide;
     
     bool is_ooi;
-    std::string ooiid;
+//     std::string ooiid;
     
     // hook functions
     std::function<void(uint64_t tick_time)> tick_hook;

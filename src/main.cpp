@@ -38,6 +38,9 @@ int main() {
     
     
 //     std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " have slept and unload 2\n";
+    
+    std::cout << "Size:  " << std::dec << sizeof(Thing) << "\n";
+    
     return 0;
     
     
