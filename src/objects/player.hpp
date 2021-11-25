@@ -13,5 +13,5 @@ public:
     
     ~Player ();
     
-    static void default_action (Thing* obj, std::vector<bool> actions, iVec2 move_dir, iVec2 cursor_pos);
+    static void default_action (Controllable* obj, std::vector<bool> actions, iVec2 move_dir, iVec2 cursor_pos);
 };

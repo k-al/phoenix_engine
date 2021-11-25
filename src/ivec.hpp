@@ -44,6 +44,10 @@ struct iVec2 {
     void operator>>= (const unsigned int shift);
     
     
+    iVec2 (const sf::Vector2i set);
+    
+    void operator= (const sf::Vector2i set);
+    
     sf::Vector2f as_vec2f () const;
     
     sf::Vector2f as_vec2f (const float scale) const;

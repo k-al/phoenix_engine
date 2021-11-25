@@ -4,8 +4,9 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../ivec.h"
+#include "../ivec.hpp"
 
+class Controllable;
 
 class UI_element {
     
@@ -16,17 +17,17 @@ class UI_element {
     
     std::function<void()> left_click; // what should executed if element is left clicked
     std::function<void()> right_click; // what should executed if element is right clicked
-}
+};
 
 class UI {
 public:
-    Interaction input;
-    
     std::vector<UI_element> elements;
-    Controllable* follow = null_ptr;
+    Controllable* follow = nullptr;
     
+    void change_follow (Controllable*);
     
+    bool process_input (std::vector<bool> inputs, iVec2 move_dir, iVec2 cursor_pos);
     
-}
+};
 
 #endif // header guard

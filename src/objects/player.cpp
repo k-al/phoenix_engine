@@ -7,7 +7,7 @@ Player::Player () {
     this->action = &Player::default_action;
 }
 
-void Player::default_action (Thing* obj, std::vector<bool> actions, iVec2 move_dir, iVec2 cursor_pos) {
+void Player::default_action (Controllable* obj, std::vector<bool> actions, iVec2 move_dir, iVec2 cursor_pos) {
     Player* that = static_cast<Player*>(obj);
     
     move_dir *= that->speed;

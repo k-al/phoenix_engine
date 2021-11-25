@@ -106,6 +106,16 @@ void iVec2::operator>>= (const unsigned int shift) {
     }
 }
 
+iVec2::iVec2 (const sf::Vector2i set) {
+    this->x = set.x;
+    this->y = set.y;
+}
+
+void iVec2::operator= (const sf::Vector2i set) {
+    this->x = set.x;
+    this->y = set.y;
+}
+
 sf::Vector2f iVec2::as_vec2f () const {
     return sf::Vector2f(this->x, this->y);
 }

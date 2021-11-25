@@ -39,3 +39,7 @@ iVec2 KeyboardInteraction::get_move_dir () {
         return iVec2(straight * horizontal, 0);
     }
 }
+
+iVec2 KeyboardInteraction::get_cursor_pos () {
+    return sf::Mouse::getPosition();
+}

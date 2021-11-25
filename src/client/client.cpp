@@ -6,10 +6,13 @@
 
 #include "client.hpp"
 
+class Controllable;
+
 Client::Client () {}
 
 Client::~Client () {
     // cleanup
+    this->main_window.close();
 }
 
 void Client::run () {
@@ -22,13 +25,19 @@ void Client::run () {
         while (this->main_window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 //? popup with promt
-                this->main_window.close();
+                return;
             }
         }
         
         
-        
+        this->draw();
     }
+}
+
+void Client::change_follow (Thing* obj) {
+    this->follow = obj;
+    
+    this->ui->change_follow(dynamic_cast<Controllable*>(obj)); // call it with nullptr if it is not Controllable
 }
 
 void Client::draw () {
@@ -38,5 +47,9 @@ void Client::draw () {
                 this->active_sprites.push_back(&visible->sprite);
             }
         }
+    }
+    
+    for (sf::Sprite* sprite : this->active_sprites) {
+        this->main_window.draw(*sprite);
     }
 }
