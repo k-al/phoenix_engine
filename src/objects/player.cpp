@@ -15,6 +15,11 @@ Player::Player () {
 
 Player::~Player () {}
 
+void Player::tick (uint64_t time) {
+    return;
+}
+
+
 void Player::default_action (Controllable* obj, std::vector<bool> actions, iVec2 move_dir, iVec2 cursor_pos) {
     
 }

@@ -1,5 +1,7 @@
 
 // #include <SFML/Graphics.hpp> // included by .hpp
+#include <iostream>
+#include <thread>
 
 #include "server/chunk.hpp"
 #include "objects/visible.hpp"
@@ -7,8 +9,6 @@
 #include "../objects/controllable.hpp"
 
 #include "client.hpp"
-
-class Controllable;
 
 Client::Client () {}
 
@@ -20,6 +20,7 @@ Client::~Client () {
 void Client::run () {
     this->main_window.create(sf::VideoMode::getFullscreenModes()[1], "Tarnish"/*, sf::Style::Fullscreen*/);
     
+    this->main_window.setFramerateLimit(50);
     
     sf::Event event;
     
@@ -43,6 +44,16 @@ void Client::change_follow (Thing* obj) {
 }
 
 void Client::draw () {
+    
+    std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " got to draw()\n";
+    
+    if (Controllable* contr_follow = dynamic_cast<Controllable*>(this->follow)) {
+        std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " ask for active chunks\n";
+        this->active_chunks = contr_follow->get_active_chunks(5);
+        std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " got the active chunks\n";
+    }
+    
+    
     for (Chunk* chunk : this->active_chunks) {
         for (Thing* thing : chunk->objects) {
             if (Visible* visible = dynamic_cast<Visible*>(thing)) {
@@ -51,7 +62,11 @@ void Client::draw () {
         }
     }
     
+    this->main_window.clear(sf::Color::Black);  
+    
     for (sf::Sprite* sprite : this->active_sprites) {
         this->main_window.draw(*sprite);
     }
+    
+    this->main_window.display();
 }

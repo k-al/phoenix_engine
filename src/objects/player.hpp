@@ -13,5 +13,7 @@ public:
     
     ~Player ();
     
+    void tick (uint64_t time);
+    
     static void default_action (Controllable* obj, std::vector<bool> actions, iVec2 move_dir, iVec2 cursor_pos);
 };

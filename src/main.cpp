@@ -9,6 +9,7 @@
 #include "ivec.hpp"
 #include "server/server.hpp"
 #include "objects/wall.hpp"
+#include "objects/player.hpp"
 #include "client/client.hpp"
 
 int main() {
@@ -30,7 +31,13 @@ int main() {
     
     myfirstserver.chunks[iVec2(2, 0)].add(&entity);
     
+    Player player = Player();
+    
+    myfirstserver.chunks[iVec2(2, 0)].add(&player);
+    
     Client myfirstclient = Client();
+    
+    myfirstclient.change_follow(&player);
     
     myfirstclient.run();
     
