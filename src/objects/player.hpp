@@ -2,7 +2,7 @@
 #include "visible.hpp"
 #include "controllable.hpp"
 
-class Player: public Visible, Controllable {
+class Player: virtual public Visible, virtual public Controllable {
 public:
     
     uint64_t speed; // how much space traveled per frame (multiplied by move_dir)

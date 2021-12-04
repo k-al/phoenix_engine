@@ -3,6 +3,8 @@
 
 #include "server/chunk.hpp"
 #include "objects/visible.hpp"
+#include "ui.hpp"
+#include "../objects/controllable.hpp"
 
 #include "client.hpp"
 

@@ -15,6 +15,7 @@ class UI;
 class Client {
   public:
     Server* server = nullptr;
+    UI* ui = nullptr;
     Thing* follow = nullptr;
     
     

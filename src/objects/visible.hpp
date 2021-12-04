@@ -5,7 +5,7 @@
 #include "ivec.hpp"
 #include "objects/thing.hpp"
 
-class Visible : public Thing {
+class Visible : virtual public Thing {
   public:
     sf::Sprite sprite;
     
