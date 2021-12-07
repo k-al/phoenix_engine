@@ -33,6 +33,9 @@ int main() {
     
     Player player = Player();
     
+    player.chunk = &myfirstserver.chunks[iVec2(2, 0)];
+    player.server = &myfirstserver;
+    
     myfirstserver.chunks[iVec2(2, 0)].add(&player);
     
     Client myfirstclient = Client();

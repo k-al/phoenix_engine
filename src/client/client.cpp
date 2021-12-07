@@ -10,11 +10,14 @@
 
 #include "client.hpp"
 
-Client::Client () {}
+Client::Client () {
+    this->ui = new UI();
+}
 
 Client::~Client () {
     // cleanup
     this->main_window.close();
+    delete this->ui;
 }
 
 void Client::run () {
@@ -50,7 +53,7 @@ void Client::draw () {
     if (Controllable* contr_follow = dynamic_cast<Controllable*>(this->follow)) {
         std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " ask for active chunks\n";
         this->active_chunks = contr_follow->get_active_chunks(5);
-        std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " got the active chunks\n";
+        std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " got " << this->active_chunks.size() << " active chunks\n";
     }
     
     
@@ -65,6 +68,7 @@ void Client::draw () {
     this->main_window.clear(sf::Color::Black);  
     
     for (sf::Sprite* sprite : this->active_sprites) {
+        std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " draws " << sprite << "\n";
         this->main_window.draw(*sprite);
     }
     

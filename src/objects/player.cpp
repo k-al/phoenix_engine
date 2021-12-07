@@ -11,6 +11,10 @@ Player::Player () {
         
         this->move(move_dir);
     };
+    
+    this->tick_hook = [this](uint64_t time)->void{
+        return;
+    };
 }
 
 Player::~Player () {}
