@@ -1,7 +1,5 @@
 
 // #include <SFML/Graphics.hpp> // included by .hpp
-#include <iostream>
-#include <thread>
 
 #include "server/chunk.hpp"
 #include "objects/visible.hpp"
@@ -10,14 +8,20 @@
 
 #include "client.hpp"
 
+#include <iostream> // just for debugging
+#include <thread>
+
 Client::Client () {
     this->ui = new UI();
+    this->interaction = new KeyboardInteraction();
+    this->interaction->set_default_bindings();
 }
 
 Client::~Client () {
     // cleanup
     this->main_window.close();
     delete this->ui;
+    delete this->interaction;
 }
 
 void Client::run () {
@@ -35,6 +39,7 @@ void Client::run () {
             }
         }
         
+        this->ui->process_input(this->interaction->get_actions(), this->interaction->get_move_dir(), this->interaction->get_cursor_pos());
         
         this->draw();
     }
@@ -48,27 +53,29 @@ void Client::change_follow (Thing* obj) {
 
 void Client::draw () {
     
-    std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " got to draw()\n";
+    this->active_sprites.clear();
     
     if (Controllable* contr_follow = dynamic_cast<Controllable*>(this->follow)) {
-        std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " ask for active chunks\n";
-        this->active_chunks = contr_follow->get_active_chunks(5);
-        std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " got " << this->active_chunks.size() << " active chunks\n";
+//         std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " ask for active chunks\n";
+        this->active_chunks = contr_follow->get_active_chunks(2);
+//         std::cout << "draw() got " << this->active_chunks.size() << " active chunks\n";
     }
     
     
     for (Chunk* chunk : this->active_chunks) {
+//         std::cout << std::hex << "chunk(" << chunk << ") got " << chunk->objects.size() << " objects\n";
         for (Thing* thing : chunk->objects) {
             if (Visible* visible = dynamic_cast<Visible*>(thing)) {
                 this->active_sprites.push_back(&visible->sprite);
             }
         }
+//         std::cout << "new number of Visibles: " << this->active_sprites.size() << " objects\n";
     }
     
     this->main_window.clear(sf::Color::Black);  
     
     for (sf::Sprite* sprite : this->active_sprites) {
-        std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " draws " << sprite << "\n";
+//         std::cout << "draw " << sprite << "\n";
         this->main_window.draw(*sprite);
     }
     

@@ -27,7 +27,14 @@ int main() {
         myfirstserver.wake(iVec2(2, i));
     }
     
+    sf::Texture wall;
+    wall.loadFromFile("textures/brick_wall32.png");
+    
+    sf::Texture mandrio;
+    mandrio.loadFromFile("textures/mandrio.png");
+    
     Wall entity = Wall();
+    entity.sprite.setTexture(wall);
     
     myfirstserver.chunks[iVec2(2, 0)].add(&entity);
     
@@ -35,6 +42,7 @@ int main() {
     
     player.chunk = &myfirstserver.chunks[iVec2(2, 0)];
     player.server = &myfirstserver;
+    player.sprite.setTexture(mandrio);
     
     myfirstserver.chunks[iVec2(2, 0)].add(&player);
     

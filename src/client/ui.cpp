@@ -15,7 +15,7 @@ bool UI::process_input (std::vector<bool> inputs, iVec2 move_dir, iVec2 cursor_p
     // hand the other inputs to the controlled object
     
     if (this->follow)
-        this->follow->action(this->follow, inputs, move_dir, cursor_pos);
+        this->follow->action(inputs, move_dir, cursor_pos);
     
     return true;
 }

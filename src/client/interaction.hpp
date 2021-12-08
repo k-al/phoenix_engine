@@ -35,17 +35,23 @@ class Interaction {
         count  // Must stay last. Used for array size
     };
     
-    virtual void set_default_bindings ();
+    virtual ~Interaction () = 0;
     
-    virtual std::vector<bool> get_actions ();
-    virtual iVec2 get_move_dir ();
-    virtual iVec2 get_cursor_pos ();
+    virtual void set_default_bindings () = 0;
+    
+    virtual std::vector<bool> get_actions () = 0;
+    virtual iVec2 get_move_dir () = 0;
+    virtual iVec2 get_cursor_pos () = 0;
 };
 
 class KeyboardInteraction : public Interaction {
+  public:
     sf::Keyboard::Key key_bindings[uint64_t(Interaction::Action::count)];
     sf::Mouse::Button mouse_bindings[uint64_t(Interaction::Action::count)];
     bool is_mouse[uint64_t(Interaction::Action::count)];
+    
+    KeyboardInteraction ();
+    ~KeyboardInteraction ();
     
     bool get_button (Action bt);
     
