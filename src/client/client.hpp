@@ -1,20 +1,35 @@
+// header guard
+#ifndef CLIENT_HEADER
+#define CLIENT_HEADER
+
+#include "interaction.hpp"
 
 #include <SFML/Graphics.hpp>
 
+
+
 class Server;
 class Thing;
+class UI;
 
 class Client {
-    
-    Server* servre = nullptr;
+  public:
+    Server* server = nullptr;
+    UI* ui = nullptr;
+    Interaction* interaction = nullptr;
     Thing* follow = nullptr;
     
-    sf::Window main_window;
     
+    
+    sf::RenderWindow main_window;
     sf::View main_view;
     
+    std::vector<sf::Sprite*> active_sprites;
     
-    Client () {}
+    std::vector<Chunk*> active_chunks;
+    
+    
+    Client ();
     
     ~Client ();
     
@@ -25,4 +40,9 @@ class Client {
     
     void change_follow (Thing*);
     
+    void draw ();
+    
 };
+
+
+#endif // header guard

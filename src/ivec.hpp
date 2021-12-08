@@ -35,6 +35,18 @@ struct iVec2 {
     
     void operator-= (const iVec2 sub);
     
+    iVec2 operator<< (const unsigned int shift) const;
+    
+    void operator<<= (const unsigned int shift);
+    
+    iVec2 operator>> (const unsigned int shift) const;
+    
+    void operator>>= (const unsigned int shift);
+    
+    
+    iVec2 (const sf::Vector2i set);
+    
+    void operator= (const sf::Vector2i set);
     
     sf::Vector2f as_vec2f () const;
     

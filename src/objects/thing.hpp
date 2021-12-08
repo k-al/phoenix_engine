@@ -37,7 +37,7 @@ class Thing {
     std::function<bool(const Thing*)> is_solide;
     
     bool is_ooi;
-    std::string ooiid;
+//     std::string ooiid;
     
     // hook functions
     std::function<void(uint64_t tick_time)> tick_hook;
@@ -56,7 +56,7 @@ class Thing {
     std::vector<Thing*> coll_check (const iVec2& upper_bound, const iVec2& lower_bound, const std::vector<Thing*>& others) const;
     
     
-    // informations used and managed by loader
+    // informations used and managed by loader [deprecated]
     std::atomic<uint64_t> multh_del_it[1] = {0xFFFFFFFFFFFFFFFF}; // iterator to chunk_list for fast deleting
     std::atomic<bool> multh_added[1] = {false}; // flag if in add_list
     

@@ -1,4 +1,4 @@
-export CFLAGS = -std=c++17 -O3 -g
+export CFLAGS = -std=c++17 -O3 -g -Wall
 export LIB_INCLUDES = -I$(shell pwd)/lib-multh/lib/
 SFMLFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 

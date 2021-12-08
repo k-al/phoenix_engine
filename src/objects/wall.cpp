@@ -14,7 +14,7 @@ Wall::~Wall () {}
 
 // Walls dont need to do anything
 void Wall::tick (uint64_t tick_time) {
-    std::cout << "hey i got a tick!\n";
+//     std::cout << "hey i got a tick!\n";
     return;
 }
 

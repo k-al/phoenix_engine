@@ -10,11 +10,20 @@
 struct Thing;
 
 struct Chunk {
+    // use 32 bit for coordination in chunks, but reserve 6 of them for overflow detection
+    static const int64_t size = 0x08000000; // should be 0b1[0]{26}
+    
+    // the real range of coordinates values
+    static const int64_t coo_max = (size / 2) - 1; // should be 0x03FFFFFF
+    static const int64_t coo_min = -(size / 2); // should be 0xFBFFFFFF
+    
     // object-pointers
     std::vector<Thing*> objects;
     
     iVec2 position;
     bool is_generated;
+    bool is_loaded;
+    bool is_visible;
     
     std::set<Thing*> loaded_by;
     

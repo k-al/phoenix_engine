@@ -1,9 +1,9 @@
 #ifndef WALL_HEADER
 #define WALL_HEADER
 
-#include "thing.hpp"
+#include "visible.hpp"
 
-struct Wall: public Thing {
+struct Wall: public Visible {
     
     Wall ();
     ~Wall ();

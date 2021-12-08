@@ -9,6 +9,8 @@
 #include "ivec.hpp"
 #include "server/server.hpp"
 #include "objects/wall.hpp"
+#include "objects/player.hpp"
+#include "client/client.hpp"
 
 int main() {
     std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " is here\n";
@@ -25,23 +27,38 @@ int main() {
         myfirstserver.wake(iVec2(2, i));
     }
     
+    sf::Texture wall;
+    wall.loadFromFile("textures/brick_wall32.png");
+    
+    sf::Texture mandrio;
+    mandrio.loadFromFile("textures/mandrio.png");
+    
     Wall entity = Wall();
+    entity.sprite.setTexture(wall);
     
     myfirstserver.chunks[iVec2(2, 0)].add(&entity);
     
-    std::this_thread::sleep_for (std::chrono::milliseconds(50));
+    Player player = Player();
     
-    for (uint64_t i = 20000; i < 30000; ++i) {
-        myfirstserver.sleep(iVec2(2, i));
-    }
+    player.chunk = &myfirstserver.chunks[iVec2(2, 0)];
+    player.server = &myfirstserver;
+    player.sprite.setTexture(mandrio);
     
+    myfirstserver.chunks[iVec2(2, 0)].add(&player);
     
-    std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " have slept and unload 1\n";
-    std::this_thread::sleep_for (std::chrono::milliseconds(200));
+    Client myfirstclient = Client();
     
+    myfirstclient.change_follow(&player);
+    
+    myfirstclient.run();
+    
+//     std::this_thread::sleep_for (std::chrono::milliseconds(250));
     
     
 //     std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " have slept and unload 2\n";
+    
+    std::cout << "Size:  " << std::dec << sizeof(Thing) << "\n";
+    
     return 0;
     
     
