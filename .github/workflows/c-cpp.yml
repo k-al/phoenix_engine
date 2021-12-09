@@ -14,6 +14,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: install_sfml
-      run: sudo apt-get install sfml_2.5
+      run: sudo apt search sfml
     - name: make
       run: make Tarnish.app
