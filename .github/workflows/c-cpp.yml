@@ -1,0 +1,24 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ tarnish-0.1 ]
+  pull_request:
+    branches: [ tarnish-0.1 ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Checkout submodules
+      run: git submodule update --init --recursive
+      
+    - name: install sfml
+      run: sudo apt-get update && sudo apt-get install libsfml-dev
+      
+    - name: make
+      run: make -j6 Tarnish.app
