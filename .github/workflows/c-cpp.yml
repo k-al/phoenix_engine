@@ -13,7 +13,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: install_sfml
+    - name: install sfml
       run: sudo apt-get update && sudo apt-get install libsfml-dev
+    - name: get submodules
+      run: git status
     - name: make
       run: make Tarnish.app
