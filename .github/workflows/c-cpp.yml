@@ -1,0 +1,19 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ tarnish-0.1 ]
+  pull_request:
+    branches: [ tarnish-0.1 ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: install_sfml
+      run: sudo apt-get install sfml
+    - name: make
+      run: make Tarnish.app
