@@ -12,7 +12,7 @@ void Loader::load (int32 range = -1) {
     active_chunks.reserve((this->range * 2 + 1) * (this->range * 2 + 1));
     
     const Server* server = this->chunk->server;
-    const std::unordered_map<iVec2, Chunk>& chunks = server->chunks;
+    const std::unordered_map<iVec2, Chunk, Server::MapKeyHasher>& chunks = server->chunks;
     const iVec2 chunk_pos = this->chunk->position;
     
     auto chunk_it = chunks.end();
