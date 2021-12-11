@@ -1,5 +1,4 @@
 
-
 #include "controllable.hpp"
 
 void Controllable::action (std::vector<bool> actions, iVec2 move_dir, iVec2 cursor_pos) {

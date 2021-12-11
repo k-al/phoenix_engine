@@ -21,7 +21,7 @@ public:
     // if not precomputed, the function returns false (the buffervector is not overwritten in that case)
     bool get_active_chunks (std::vector<Chunk*>&);
     
-    // override the standart load funktion to save the active chunks if the standart range is loaded
+    // override the standart load function to save the active chunks if the standart range is loaded
     virtual void load (uint32 range) override;
 };
 
