@@ -20,7 +20,7 @@ class Server {
     // maps
     struct MapKeyHasher{
         int64_t operator()(const iVec2& k) const {
-            return k.x << 32 | k.y;
+            return k.x << 2 ^ k.y;
         }
     };
     

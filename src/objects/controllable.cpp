@@ -50,7 +50,7 @@ bool Controllable::get_active_chunks (std::vector<Chunk*>& buffer) {
 
 
 // if the standart range should be loaded, update active chunks
-virtual void Controllable::load (uint32 range) {
+void Controllable::load (uint32 range) {
     if (this->range == range)
         return this->get_active_chunks(this->active_chunks, range);
     

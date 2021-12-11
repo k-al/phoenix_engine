@@ -8,9 +8,10 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
-#include <array>
+#include <vector>
 
 class Visible : virtual public Thing {
+public:
     sf::Sprite sprite;
     
     // the path of the texture
@@ -18,14 +19,14 @@ class Visible : virtual public Thing {
     
     // startpoints of the animations
     // must ended with the length of the whole spritesheet
-    std::array<uint16>& animations;
+    std::vector<uint16>& animations;
     // current sprite texture
     uint16 animation_frame = 0;
     // end of current animation
     uint16 animation_end = 0;
     
     // the last 8 bit of the timestamp when the animation was last updated (for timelapsing)
-    uint8 last updated = 0;
+    uint8 last_updated = 0;
     // true if animation should loop (don't reset next_animation)
     bool loop;
     // number of next animation (index of this->animations)
@@ -39,7 +40,7 @@ class Visible : virtual public Thing {
     
     // change the used texture
     //? change this to bool to indicate if the new texture existed?
-    void update_texture (std::string&, std::array<uint16>&);
-}
+    void update_texture (std::string&, std::vector<uint16>&);
+};
 
 #endif

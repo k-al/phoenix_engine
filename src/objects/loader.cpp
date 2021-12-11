@@ -5,8 +5,8 @@
 
 void Loader::load (uint32 range) {
     
-    const Server* server = this->chunk->server;
-    const auto& chunks = server->chunks; // auto should compile to std::unordered_map<iVec2, Chunk, Server::MapKeyHasher>
+    Server* server = this->chunk->server;
+    std::unordered_map<iVec2, Chunk, Server::MapKeyHasher>& chunks = server->chunks; // auto should compile to std::unordered_map<iVec2, Chunk, Server::MapKeyHasher>
     const iVec2 chunk_pos = this->chunk->position;
     
     auto chunk_it = chunks.end();

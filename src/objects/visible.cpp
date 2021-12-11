@@ -13,7 +13,7 @@ sf::Sprite* Visible::update_sprite (uint64 time) {
     if (time_diff <= 0) // allready drawn this frame
         return &this->sprite;
     
-    this->animation_frame += reinterpret_cast<uint16>(time_diff); // reinterpret because time_dif is > 0
+    this->animation_frame += static_cast<uint16>(time_diff); // reinterpret because time_dif is > 0
     
     // if the animation is over set the current animation to the next animation
     if (this->animation_frame >= this->animation_end) {
@@ -37,7 +37,7 @@ sf::Sprite* Visible::update_sprite (uint64 time) {
     
     this->set_animation_frame(this->animation_frame);
     
-    return this->sprite;
+    return &this->sprite;
 }
 
 
@@ -51,17 +51,18 @@ void Visible::set_animation_frame (uint16 frame) {
 }
 
 
-void Visible::update_texture (std::string& new_tex_name, std::array<uint16>& new_animations) {
+void Visible::update_texture (std::string& new_tex_name, std::vector<uint16>& new_animations) {
     TextureManager::drop(this->texture_name);
     
     this->texture_name = new_tex_name;
     
-    sf::Texture* tex = TextureManager::get(this->texture_name);
-    this->sprite.setTexture(&tex);
+    const sf::Texture& tex = TextureManager::get(this->texture_name);
+    this->sprite.setTexture(tex);
     
     this->animations = new_animations;
     this->animation_frame = 0;
     this->animation_end = 0;
-    this
+    this->next_animation = new_animations.size();
+    this->set_animation_frame(0);
 }
 

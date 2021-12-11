@@ -10,7 +10,7 @@ inline bool border_check (Thing* that) {
     int32 x = that->pos.x & mask;
     int32 y = that->pos.y & mask;
     
-    if (x | y == 0) // no overflow
+    if ((x | y) == 0) // no overflow
         return false;
     
     //! TODO

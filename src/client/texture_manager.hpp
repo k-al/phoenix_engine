@@ -17,15 +17,15 @@ public:
     
     struct TextureObject {
         sf::Texture tex;
-        uint32 use_counter
+        uint32 use_counter;
         std::mutex mtx;
-    }
+    };
     
     static std::unordered_map<std::string, TextureObject> textures;
     
-    static get (const std::string&);
+    static sf::Texture get (const std::string&);
     
-    static drop (const std::string&);
-}
+    static void drop (const std::string&);
+};
 
 #endif

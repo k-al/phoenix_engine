@@ -8,9 +8,8 @@
 
 #include "ivec.hpp"
 #include "server/server.hpp"
-#include "objects/wall.hpp"
-#include "objects/player.hpp"
 #include "client/client.hpp"
+#include "objects/controllable.hpp"
 
 int main() {
     std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " is here\n";
@@ -27,28 +26,7 @@ int main() {
         myfirstserver.wake(iVec2(2, i));
     }
     
-    sf::Texture wall;
-    wall.loadFromFile("textures/brick_wall32.png");
-    
-    sf::Texture mandrio;
-    mandrio.loadFromFile("textures/mandrio.png");
-    
-    Wall entity = Wall();
-    entity.sprite.setTexture(wall);
-    
-    myfirstserver.chunks[iVec2(2, 0)].add(&entity);
-    
-    Player player = Player();
-    
-    player.chunk = &myfirstserver.chunks[iVec2(2, 0)];
-    player.server = &myfirstserver;
-    player.sprite.setTexture(mandrio);
-    
-    myfirstserver.chunks[iVec2(2, 0)].add(&player);
-    
     Client myfirstclient = Client();
-    
-    myfirstclient.change_follow(&player);
     
     myfirstclient.run();
     

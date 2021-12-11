@@ -2,30 +2,32 @@
 #ifndef IVEC2_HEADER
 #define IVEC2_HEADER
 
+#include "defs.hpp"
+
 #include <SFML/Graphics.hpp>
 
 //# inline all funktions
 struct iVec2 {
-    int64_t x;
-    int64_t y;
+    int32 x;
+    int32 y;
     
     // constructors
     iVec2 ();
     
-    iVec2 (int64_t x, int64_t y);
+    iVec2 (int32 x, int32 y);
     
     // operators
     bool operator== (const iVec2 &rhs) const;
     
     bool operator!= (const iVec2 &rhs) const;
     
-    iVec2 operator* (int64_t mul) const;
+    iVec2 operator* (int32 mul) const;
     
-    void operator*= (int64_t mul);
+    void operator*= (int32 mul);
     
-    iVec2 operator/ (int64_t mul) const;
+    iVec2 operator/ (int32 mul) const;
     
-    void operator/= (int64_t mul);
+    void operator/= (int32 mul);
     
     iVec2 operator+ (const iVec2 add) const;
     
@@ -35,13 +37,13 @@ struct iVec2 {
     
     void operator-= (const iVec2 sub);
     
-    iVec2 operator<< (const unsigned int shift) const;
+    iVec2 operator<< (const size_t shift) const;
     
-    void operator<<= (const unsigned int shift);
+    void operator<<= (const size_t shift);
     
-    iVec2 operator>> (const unsigned int shift) const;
+    iVec2 operator>> (const size_t shift) const;
     
-    void operator>>= (const unsigned int shift);
+    void operator>>= (const size_t shift);
     
     
     iVec2 (const sf::Vector2i set);

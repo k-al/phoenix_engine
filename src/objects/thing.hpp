@@ -8,8 +8,9 @@
 class Chunk;
 
 class Thing {
+public:
     Chunk* chunk;
-    iVec2 position;
+    iVec2 pos;
     
     iVec2 hitbox; // Vector half the size of the hitbox (for fast computing the corners)
     
@@ -54,6 +55,6 @@ class Thing {
     
     // code that is executed every tick
     virtual void tick (uint64) {}
-}
+};
 
 #endif
