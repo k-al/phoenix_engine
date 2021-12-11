@@ -2,7 +2,7 @@
 #ifndef VISIBLE_HEADER
 #define VISIBLE_HEADER
 
-
+#include "thing.hpp"
 
 #include "../defs.hpp"
 

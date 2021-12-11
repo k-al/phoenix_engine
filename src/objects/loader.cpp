@@ -3,16 +3,10 @@
 
 #include "../server/server.hpp"
 
-void Loader::load (int32 range = -1) {
-    if (range != -1)
-        this->range = range;
-    
-    // initalise the new active_chunks with the maximum capacity to reduce memory allocations
-    std::vector<Chunk*> active_chunks();
-    active_chunks.reserve((this->range * 2 + 1) * (this->range * 2 + 1));
+void Loader::load (uint32 range) {
     
     const Server* server = this->chunk->server;
-    const std::unordered_map<iVec2, Chunk, Server::MapKeyHasher>& chunks = server->chunks;
+    const auto& chunks = server->chunks; // auto should compile to std::unordered_map<iVec2, Chunk, Server::MapKeyHasher>
     const iVec2 chunk_pos = this->chunk->position;
     
     auto chunk_it = chunks.end();
@@ -28,12 +22,9 @@ void Loader::load (int32 range = -1) {
                 if (!tmp->is_active()) {
                     server->wake(tmp);
                 }
-                active_chunks(tmp);
             } else {
                 server->load(chunk_pos + dif);
             }
         }
     }
-    
-    this->active_chunks.swap(active_chunks);
 }
