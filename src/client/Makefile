@@ -1,4 +1,4 @@
-FILES = client.o interaction.o ui.o
+FILES = client.o interaction.o ui.o texture_manager.o
 
 build: $(FILES)
 
@@ -13,6 +13,10 @@ interaction.o: interaction.cpp interaction.hpp ../ivec.hpp
 ui.o: ui.cpp ui.hpp ../ivec.hpp ../objects/controllable.hpp
 	g++ $(CFLAGS) $(INCLUDES) -c -o ui.o ui.cpp
 	cp ui.o ..
+
+texture_manager.o: texture_manager.cpp texture_manager.hpp ../defs.hpp
+	g++ $(CFLAGS) $(INCLUDES) -c -o texture_manager.o texture_manager.cpp
+	cp texture_manager.o ..
 
 clean:
 	rm *.o

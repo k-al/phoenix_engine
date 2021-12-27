@@ -1,19 +1,21 @@
 
 #include "controllable.hpp"
 
+#include "server/server.hpp"
+
 void Controllable::action (std::vector<bool> actions, iVec2 move_dir, iVec2 cursor_pos) {
     return;
 }
 
 
-void Controllable::get_active_chunks (std::vector<Chunk*>& buffer, uint32 range) {
+void Controllable::get_active_chunks (std::vector<Chunk*>& buffer, int32 range) {
     
     // initalise the new active_chunks with the maximum capacity to reduce memory allocations
-    std::vector<Chunk*> active_chunks();
+    std::vector<Chunk*> active_chunks;
     active_chunks.reserve((this->range * 2 + 1) * (this->range * 2 + 1));
     
-    const Server* server = this->chunk->server;
-    const auto& chunks = server->chunks; // auto should compile to std::unordered_map<iVec2, Chunk, Server::MapKeyHasher>
+    Server* server = this->chunk->server;
+    auto& chunks = server->chunks; // auto should compile to std::unordered_map<iVec2, Chunk, Server::MapKeyHasher>
     const iVec2 chunk_pos = this->chunk->position;
     
     auto chunk_it = chunks.end();
@@ -50,7 +52,7 @@ bool Controllable::get_active_chunks (std::vector<Chunk*>& buffer) {
 
 
 // if the standart range should be loaded, update active chunks
-void Controllable::load (uint32 range) {
+void Controllable::load (int32 range) {
     if (this->range == range)
         return this->get_active_chunks(this->active_chunks, range);
     

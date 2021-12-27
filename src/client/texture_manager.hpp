@@ -23,7 +23,7 @@ public:
     
     static std::unordered_map<std::string, TextureObject> textures;
     
-    static sf::Texture get (const std::string&);
+    static sf::Texture& get (const std::string&);
     
     static void drop (const std::string&);
 };

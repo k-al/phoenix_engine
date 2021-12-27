@@ -13,8 +13,9 @@ KeyboardInteraction::KeyboardInteraction () {}
 KeyboardInteraction::~KeyboardInteraction () {}
 
 bool KeyboardInteraction::get_button (Action bt) {
-    return (this->is_mouse[static_cast<unsigned int>(bt)] && sf::Mouse::isButtonPressed(this->mouse_bindings[static_cast<unsigned int>(bt)]))
-                || sf::Keyboard::isKeyPressed(this->key_bindings[static_cast<unsigned int>(bt)]);
+    return this->is_mouse[static_cast<unsigned int>(bt)]
+                ? sf::Mouse::isButtonPressed(this->mouse_bindings[static_cast<unsigned int>(bt)])
+                : sf::Keyboard::isKeyPressed(this->key_bindings[static_cast<unsigned int>(bt)]);
 }
 
 //# that is absolutly ugly

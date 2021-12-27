@@ -3,7 +3,7 @@
 
 #include "../server/server.hpp"
 
-void Loader::load (uint32 range) {
+void Loader::load (int32 range) {
     
     Server* server = this->chunk->server;
     std::unordered_map<iVec2, Chunk, Server::MapKeyHasher>& chunks = server->chunks; // auto should compile to std::unordered_map<iVec2, Chunk, Server::MapKeyHasher>
