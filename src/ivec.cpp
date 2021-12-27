@@ -12,7 +12,7 @@ iVec2::iVec2 () {
     this->y = 0;
 }
 
-iVec2::iVec2 (int64_t x, int64_t y) {
+iVec2::iVec2 (int32 x, int32 y) {
     this->x = x;
     this->y = y;
 }
@@ -28,20 +28,20 @@ bool iVec2::operator!= (const iVec2 &rhs) const {
            this->y != rhs.y;
 }
 
-iVec2 iVec2::operator* (int64_t mul) const {
+iVec2 iVec2::operator* (int32 mul) const {
     return iVec2(this->x * mul, this->y * mul);
 }
 
-void iVec2::operator*= (int64_t mul) {
+void iVec2::operator*= (int32 mul) {
     this->x *= mul;
     this->y *= mul;
 }
 
-iVec2 iVec2::operator/ (int64_t div) const {
+iVec2 iVec2::operator/ (int32 div) const {
     return iVec2(this->x / div, this->y / div);
 }
 
-void iVec2::operator/= (int64_t div) {
+void iVec2::operator/= (int32 div) {
     this->x /= div;
     this->y /= div;
 }
@@ -64,19 +64,19 @@ void iVec2::operator-= (const iVec2 sub) {
     this->y -= sub.y;
 }
 
-iVec2 iVec2::operator<< (const unsigned int shift) const {
+iVec2 iVec2::operator<< (const size_t shift) const {
     return iVec2(this->x << shift, this->y << shift);
 }
 
-void iVec2::operator<<= (const unsigned int shift) {
+void iVec2::operator<<= (const size_t shift) {
     this->x <<= shift;
     this->y <<= shift;
 }
 
-iVec2 iVec2::operator>> (const unsigned int shift) const {
-    uint64_t x;
-    uint64_t y;
-    uint64_t mask = (0xFFFFFFFFFFFFFFFF << (64 - shift));
+iVec2 iVec2::operator>> (const size_t shift) const {
+    uint32 x;
+    uint32 y;
+    uint32 mask = (uint32_MAX << (32 - shift));
     
     if (this->x < 0) {
         x = (this->x >> shift) | mask;
@@ -92,8 +92,8 @@ iVec2 iVec2::operator>> (const unsigned int shift) const {
     return iVec2(x, y);
 }
 
-void iVec2::operator>>= (const unsigned int shift) {
-    uint64_t mask = (0xFFFFFFFFFFFFFFFF << (64 - shift));
+void iVec2::operator>>= (const size_t shift) {
+    uint32 mask = (uint32_MAX << (32 - shift));
     if (this->x < 0) {
         this->x = (this->x >> shift) | mask;
     } else {

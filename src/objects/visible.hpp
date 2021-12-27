@@ -1,31 +1,46 @@
-
+// header guard
 #ifndef VISIBLE_HEADER
 #define VISIBLE_HEADER
 
-#include "ivec.hpp"
-#include "objects/thing.hpp"
+#include "thing.hpp"
+
+#include "../defs.hpp"
+
+#include <SFML/Graphics.hpp>
+#include <string>
+#include <vector>
 
 class Visible : virtual public Thing {
-  public:
+public:
     sf::Sprite sprite;
     
-    //# These are static informations for a type of objects. This not have to stored multiple times.
-    std::string texture;
-    std::vector<uint64_t> animations; // start and endpoits of the frames for all animations
+    // the path of the texture
+    std::string& texture_name;
     
-    uint64_t last_tick; // Last game_tick that this object has been updatet. For timelapsing.
+    // startpoints of the animations
+    // must ended with the length of the whole spritesheet
+    std::vector<uint16>& animations;
+    // current sprite texture
+    uint16 animation_frame = 0;
+    // end of current animation
+    uint16 animation_end = 0;
     
-    uint64_t current_frame; // current frame of animation
-    uint64_t end_frame; // end point of current animation
+    // the last 8 bit of the timestamp when the animation was last updated (for timelapsing)
+    uint8 last_updated = 0;
+    // true if animation should loop (don't reset next_animation)
+    bool loop;
+    // number of next animation (index of this->animations)
+    size_t next_animation = 0;
     
-    sf::Sprite* update (uint64_t game_tick, iVec2 active_chunk, iVec2 center_position);
-    bool load_texture ();
-    void unload_texture ();
+    // update and return the pointer to the Sprite for the next frame
+    sf::Sprite* update_sprite (uint64);
     
-    bool chunk_change (Chunk* new_chunk); // manage loading/unloading of the sprite, dependent on in which chunk it changes
+    // set the actual frame on the sprite by moving the texure offset
+    void set_animation_frame (uint16);
     
-    
+    // change the used texture
+    //? change this to bool to indicate if the new texture existed?
+    void update_texture (std::string&, std::vector<uint16>&);
 };
 
-
-#endif // VISIBLE_HEADER
+#endif

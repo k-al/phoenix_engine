@@ -1,42 +1,60 @@
 
-#include "../server/server.hpp"
-
 #include "controllable.hpp"
 
-// #include <thread> // just for debugging
-// #include <iostream>
+#include "server/server.hpp"
 
-std::vector<Chunk*> Controllable::get_active_chunks (const int64_t range) {
-    std::vector<Chunk*> res;
+void Controllable::action (std::vector<bool> actions, iVec2 move_dir, iVec2 cursor_pos) {
+    return;
+}
+
+
+void Controllable::get_active_chunks (std::vector<Chunk*>& buffer, int32 range) {
     
+    // initalise the new active_chunks with the maximum capacity to reduce memory allocations
+    std::vector<Chunk*> active_chunks;
+    active_chunks.reserve((this->range * 2 + 1) * (this->range * 2 + 1));
+    
+    Server* server = this->chunk->server;
+    auto& chunks = server->chunks; // auto should compile to std::unordered_map<iVec2, Chunk, Server::MapKeyHasher>
+    const iVec2 chunk_pos = this->chunk->position;
+    
+    auto chunk_it = chunks.end();
     iVec2 dif;
-    auto chunk_it = this->server->chunks.end();
     
-    for (dif.x = -range; dif.x <= range; ++dif.x) {
-        for (dif.y = -range; dif.y <= range; ++dif.y) {
+    for (dif.x = -this->range; dif.x <= this->range; ++dif.x) {
+        for (dif.y = this->range; dif.y <= this->range; ++dif.y) {
             // find Chunk in chunk_it->second
-            chunk_it = this->server->chunks.find(this->chunk->position + dif);
-            
-            // tests, if chunk is an active chunk
-            if (chunk_it != this->server->chunks.end() && chunk_it->second.is_active()) {
-                res.push_back(&chunk_it->second);
+            chunk_it = chunks.find(chunk_pos + dif);
+            // tests, if chunk already exists in map
+            if (chunk_it != chunks.end()) {
+                Chunk* tmp = &chunk_it->second;
+                if (!tmp->is_active()) {
+                    server->wake(tmp);
+                }
+                active_chunks.push_back(tmp);
+            } else {
+                server->load(chunk_pos + dif);
             }
-            
-            
-//             // debugging:
-//             std::cout << std::dec << "(" << dif.x << "|" << dif.y << ") -> (" << (this->chunk->position + dif).x << "|" << (this->chunk->position + dif).y << ") ";
-//             if (chunk_it != this->server->chunks.end()) {
-//                 if (chunk_it->second.is_active()) {
-//                     std::cout << "active!\n";);
-//                 } else {
-//                     std::cout << "inactive\n";
-//                 }
-//             } else {
-//                 std::cout << "nonexistent\n";
-//             }
-            
         }
     }
     
-    return res;
+    buffer.swap(active_chunks);
+}
+
+bool Controllable::get_active_chunks (std::vector<Chunk*>& buffer) {
+    if (this->active_chunks.empty()) {
+        return false;
+    } else {
+        buffer.swap(this->active_chunks);
+        return true;
+    }
+}
+
+
+// if the standart range should be loaded, update active chunks
+void Controllable::load (int32 range) {
+    if (this->range == range)
+        return this->get_active_chunks(this->active_chunks, range);
+    
+    return this->Loader::load(range);
 }

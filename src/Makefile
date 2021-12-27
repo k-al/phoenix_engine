@@ -8,7 +8,7 @@ build: $(FILES) build-server build-objects build-client
 ivec.o: ivec.cpp ivec.hpp
 	g++ $(CFLAGS) $(INCLUDES) -c -o ivec.o ivec.cpp
 
-main.o: main.cpp server/server.hpp objects/wall.hpp client/client.hpp
+main.o: main.cpp server/server.hpp client/client.hpp
 	g++ $(CFLAGS) $(INCLUDES) -c -o main.o main.cpp
 
 build-client:

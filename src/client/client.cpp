@@ -57,7 +57,9 @@ void Client::draw () {
     
     if (Controllable* contr_follow = dynamic_cast<Controllable*>(this->follow)) {
 //         std::cout << "Main Thread " << std::hex << std::this_thread::get_id() << " ask for active chunks\n";
-        this->active_chunks = contr_follow->get_active_chunks(2);
+        if (!contr_follow->get_active_chunks(this->active_chunks)) {
+            // contr_follow->get_active_chunks(this->active_chunks, 2);
+        }
 //         std::cout << "draw() got " << this->active_chunks.size() << " active chunks\n";
     }
     

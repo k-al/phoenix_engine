@@ -1,26 +1,24 @@
-FILES = thing.o wall.o visible.o player.o controllable.o
+FILES = thing.o loader.o visible.o controllable.o
 
 build: $(FILES)
 
-thing.o: thing.cpp thing.hpp ../ivec.hpp ../server/server.hpp ../server/chunk.hpp
+thing_hpp = thing.hpp ../ivec.hpp ../defs.hpp
+thing.o: $(thing_hpp) thing.cpp ../server/chunk.hpp
 	g++ $(CFLAGS) $(INCLUDES) -c -o thing.o thing.cpp
 	cp thing.o ..
 
-wall.o: wall.cpp wall.hpp visible.hpp thing.hpp ../ivec.hpp
-	g++ $(CFLAGS) $(INCLUDES) -c -o wall.o wall.cpp
-	cp wall.o ..
+loader_hpp = loader.hpp $(thing_hpp)
+loader.o: $(loader_hpp) loader.cpp ../server/*
+	g++ $(CFLAGS) $(INCLUDES) -c -o loader.o loader.cpp
+	cp loader.o ..
 
-visible.o: visible.cpp visible.hpp thing.hpp ../ivec.hpp
-	g++ $(CFLAGS) $(INCLUDES) -c -o visible.o visible.cpp
-	cp visible.o ..
-
-player.o: player.cpp player.hpp visible.hpp controllable.hpp ../client/interaction.hpp
-	g++ $(CFLAGS) $(INCLUDES) -c -o player.o player.cpp
-	cp player.o ..
-
-controllable.o: controllable.cpp controllable.hpp thing.hpp ../ivec.hpp ../server/server.hpp ..
+controllable_hpp = controllable.hpp $(loader_hpp)
+controllable.o: $(controllable_hpp) controllable.cpp
 	g++ $(CFLAGS) $(INCLUDES) -c -o controllable.o controllable.cpp
 	cp controllable.o ..
 
-clean:
-	rm *.o
+
+visible_hpp = visible.hpp $(thing_hpp)
+visible.o: $(visible_hpp) visible.cpp ../client/texture_manager.hpp
+	g++ $(CFLAGS) $(INCLUDES) -c -o visible.o visible.cpp
+	cp visible.o ..
